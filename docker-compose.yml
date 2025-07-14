@@ -1,0 +1,29 @@
+services:
+  mysql:
+    image: 'mysql:8.0'
+    environment:
+      - 'MYSQL_DATABASE=mydatabase'
+      - 'MYSQL_PASSWORD=secret'
+      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - 'MYSQL_USER=myuser'
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  transporte-app:
+    build: .
+    ports:
+      - '8080:8080'
+    depends_on:
+      - mysql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/mydatabase?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=secret
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - JWT_SECRET=your-super-secret-key-that-is-long-enough-for-hs512-algorithm-for-docker
+      - JWT_EXPIRATION_IN_MS=86400000
+
+volumes:
+  mysql-data:
