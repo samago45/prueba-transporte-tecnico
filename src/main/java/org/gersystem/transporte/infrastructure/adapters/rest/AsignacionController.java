@@ -7,7 +7,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 import org.gersystem.transporte.application.AsignacionService;
+import org.gersystem.transporte.application.exception.BusinessException;
+import org.gersystem.transporte.application.exception.ValidationException;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.ErrorResponseDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.exception.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +64,7 @@ public class AsignacionController {
         ),
         @ApiResponse(
             responseCode = "400",
-            description = "Regla de negocio violada",
+            description = "Error de validación: conductor inactivo, límite excedido o vehículo no disponible",
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = ErrorResponseDTO.class)
@@ -84,10 +87,10 @@ public class AsignacionController {
         try {
             asignacionService.asignarVehiculoAConductor(conductorId, vehiculoId);
             return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
+        } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(e.getMessage());
         } catch (IllegalStateException e) {
-            throw new IllegalStateException("No se puede realizar la asignación: " + e.getMessage());
+            throw new BusinessException("Error en la asignación: " + e.getMessage());
         }
     }
 
