@@ -37,9 +37,6 @@ public class Usuario extends Auditable implements UserDetails {
 
     private String apellido;
 
-    @Enumerated(EnumType.STRING)
-    private Rol rol;
-
     @ElementCollection(targetClass = Rol.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "usuario_rol", joinColumns = @JoinColumn(name = "usuario_id"))
     @Enumerated(EnumType.STRING)
@@ -54,7 +51,7 @@ public class Usuario extends Auditable implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
     }
 

@@ -6,87 +6,95 @@ CREATE TABLE IF NOT EXISTS usuario (
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    rol VARCHAR(20) NOT NULL,
-    created_date TIMESTAMP,
-    last_modified_date TIMESTAMP,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100),
+    activo BOOLEAN DEFAULT true,
+    refresh_token VARCHAR(255),
+    refresh_token_expiry_date TIMESTAMP,
     created_by VARCHAR(50),
-    last_modified_by VARCHAR(50)
+    created_date TIMESTAMP,
+    last_modified_by VARCHAR(50),
+    last_modified_date TIMESTAMP
+);
+
+-- Tabla de Roles de Usuario
+CREATE TABLE IF NOT EXISTS usuario_rol (
+    usuario_id BIGINT NOT NULL,
+    roles VARCHAR(20) NOT NULL,
+    PRIMARY KEY (usuario_id, roles),
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
 -- Tabla de Conductores
 CREATE TABLE IF NOT EXISTS conductor (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
-    dni VARCHAR(20) NOT NULL UNIQUE,
     licencia VARCHAR(20) NOT NULL UNIQUE,
-    telefono VARCHAR(20),
-    email VARCHAR(100) UNIQUE,
-    estado VARCHAR(20) NOT NULL,
-    created_date TIMESTAMP,
-    last_modified_date TIMESTAMP,
+    activo BOOLEAN DEFAULT true,
     created_by VARCHAR(50),
-    last_modified_by VARCHAR(50)
+    created_date TIMESTAMP,
+    last_modified_by VARCHAR(50),
+    last_modified_date TIMESTAMP
 );
 
 -- Tabla de Vehículos
 CREATE TABLE IF NOT EXISTS vehiculo (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    matricula VARCHAR(20) NOT NULL UNIQUE,
-    modelo VARCHAR(50) NOT NULL,
-    capacidad INT NOT NULL,
-    año INT NOT NULL,
-    estado VARCHAR(20) NOT NULL,
-    created_date TIMESTAMP,
-    last_modified_date TIMESTAMP,
+    placa VARCHAR(20) NOT NULL UNIQUE,
+    capacidad DECIMAL(10,2) NOT NULL,
+    activo BOOLEAN DEFAULT true,
+    conductor_id BIGINT,
     created_by VARCHAR(50),
-    last_modified_by VARCHAR(50)
+    created_date TIMESTAMP,
+    last_modified_by VARCHAR(50),
+    last_modified_date TIMESTAMP,
+    FOREIGN KEY (conductor_id) REFERENCES conductor(id)
 );
 
 -- Tabla de Rutas
 CREATE TABLE IF NOT EXISTS ruta (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    origen VARCHAR(100) NOT NULL,
-    destino VARCHAR(100) NOT NULL,
-    distancia DECIMAL(10,2) NOT NULL,
-    tiempo_estimado INT NOT NULL,
-    created_date TIMESTAMP,
-    last_modified_date TIMESTAMP,
+    nombre VARCHAR(100) NOT NULL,
+    punto_origen VARCHAR(100) NOT NULL,
+    punto_destino VARCHAR(100) NOT NULL,
+    distancia_km DOUBLE NOT NULL,
+    tiempo_estimado_minutos INTEGER NOT NULL,
+    activa BOOLEAN DEFAULT true,
     created_by VARCHAR(50),
-    last_modified_by VARCHAR(50)
+    created_date TIMESTAMP,
+    last_modified_by VARCHAR(50),
+    last_modified_date TIMESTAMP
 );
 
 -- Tabla de Pedidos
 CREATE TABLE IF NOT EXISTS pedido (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    cliente_id BIGINT NOT NULL,
-    conductor_id BIGINT,
+    descripcion TEXT NOT NULL,
+    peso DECIMAL(10,2) NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'PENDIENTE',
     vehiculo_id BIGINT,
-    ruta_id BIGINT NOT NULL,
-    estado VARCHAR(20) NOT NULL,
-    fecha_solicitud TIMESTAMP NOT NULL,
-    fecha_entrega TIMESTAMP,
-    created_date TIMESTAMP,
-    last_modified_date TIMESTAMP,
+    conductor_id BIGINT,
     created_by VARCHAR(50),
+    created_date TIMESTAMP,
     last_modified_by VARCHAR(50),
-    FOREIGN KEY (conductor_id) REFERENCES conductor(id),
+    last_modified_date TIMESTAMP,
     FOREIGN KEY (vehiculo_id) REFERENCES vehiculo(id),
-    FOREIGN KEY (ruta_id) REFERENCES ruta(id)
+    FOREIGN KEY (conductor_id) REFERENCES conductor(id)
 );
 
 -- Tabla de Mantenimientos
 CREATE TABLE IF NOT EXISTS mantenimiento (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     vehiculo_id BIGINT NOT NULL,
-    tipo VARCHAR(50) NOT NULL,
-    fecha_inicio TIMESTAMP NOT NULL,
-    fecha_fin TIMESTAMP,
+    fecha_programada TIMESTAMP NOT NULL,
+    fecha_realizada TIMESTAMP,
+    tipo VARCHAR(20),
     descripcion TEXT,
-    estado VARCHAR(20) NOT NULL,
-    created_date TIMESTAMP,
-    last_modified_date TIMESTAMP,
+    estado VARCHAR(20) NOT NULL DEFAULT 'PENDIENTE',
+    observaciones TEXT,
     created_by VARCHAR(50),
+    created_date TIMESTAMP,
     last_modified_by VARCHAR(50),
+    last_modified_date TIMESTAMP,
     FOREIGN KEY (vehiculo_id) REFERENCES vehiculo(id)
 ); 

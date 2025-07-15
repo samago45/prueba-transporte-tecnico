@@ -63,7 +63,7 @@ class MantenimientoControllerTest {
                     testUser.setUsername(username);
                     testUser.setPassword(passwordEncoder().encode("test123"));
                     testUser.setEmail("test@example.com");
-                    testUser.setRol(Rol.ADMIN);
+                    testUser.setRoles(List.of(Rol.ADMIN));
                     testUser.setActivo(true);
                     return testUser;
                 }

@@ -142,9 +142,5 @@ public class ConductorDomainService {
             throw new IllegalStateException("El conductor no está activo");
         }
 
-        // Aquí podrían agregarse más validaciones como:
-        // - Verificar si el conductor tiene licencia vigente
-        // - Verificar si el conductor ha cumplido el máximo de horas permitidas
-        // - Verificar si el conductor tiene todas sus documentaciones al día
     }
 } 

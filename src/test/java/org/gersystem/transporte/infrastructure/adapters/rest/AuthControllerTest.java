@@ -29,6 +29,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -51,7 +53,7 @@ class AuthControllerTest {
                     testUser.setUsername(username);
                     testUser.setPassword(passwordEncoder().encode("test123"));
                     testUser.setEmail("test@example.com");
-                    testUser.setRol(Rol.ADMIN);
+                    testUser.setRoles(List.of(Rol.ADMIN));
                     testUser.setActivo(true);
                     return testUser;
                 }
@@ -114,8 +116,9 @@ class AuthControllerTest {
         usuario = new Usuario();
         usuario.setId(1L);
         usuario.setUsername("testuser");
+        usuario.setPassword("password");
         usuario.setEmail("test@example.com");
-        usuario.setRol(Rol.USER);
+        usuario.setRoles(List.of(Rol.CLIENTE));
         usuario.setActivo(true);
 
         jwtResponse = new JwtAuthenticationResponseDTO();

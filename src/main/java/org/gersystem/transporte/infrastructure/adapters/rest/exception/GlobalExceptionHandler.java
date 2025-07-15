@@ -32,6 +32,28 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponseDTO> handleIllegalStateException(IllegalStateException ex, WebRequest request) {
+        String mensaje = "Error de validación";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        if (ex.getMessage().contains("email ya está registrado") || 
+            ex.getMessage().contains("nombre de usuario ya existe")) {
+            mensaje = "Error de registro";
+            status = HttpStatus.CONFLICT;
+        }
+
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                mensaje,
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+        return new ResponseEntity<>(errorResponse, status);
+    }
+
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidationException(ValidationException ex, WebRequest request) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(

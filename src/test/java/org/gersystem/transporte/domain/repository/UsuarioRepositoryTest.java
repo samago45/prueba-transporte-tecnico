@@ -43,8 +43,7 @@ class UsuarioRepositoryTest {
         usuario1.setEmail("test1@example.com");
         usuario1.setPassword("password123");
         usuario1.setNombre("Test User One");
-        usuario1.setRol(Rol.USER);
-        usuario1.setRoles(List.of(Rol.USER)); // Agregando lista de roles
+        usuario1.setRoles(List.of(Rol.CLIENTE));
         usuario1.setActivo(true);
         usuario1.setRefreshToken("refresh.token.1");
         usuario1.setRefreshTokenExpiryDate(LocalDateTime.now().plusDays(7));
@@ -55,8 +54,7 @@ class UsuarioRepositoryTest {
         usuario2.setEmail("test2@example.com");
         usuario2.setPassword("password456");
         usuario2.setNombre("Test User Two");
-        usuario2.setRol(Rol.ADMIN);
-        usuario2.setRoles(List.of(Rol.ADMIN)); // Agregando lista de roles
+        usuario2.setRoles(List.of(Rol.ADMIN));
         usuario2.setActivo(true);
         entityManager.persist(usuario2);
 
@@ -122,16 +120,16 @@ class UsuarioRepositoryTest {
 
     @Test
     @DisplayName("Debe encontrar usuarios por rol")
-    void findByRol_DebeEncontrarUsuarios() {
+    void findByRolesContains_DebeEncontrarUsuarios() {
         // Act
-        Page<Usuario> usuariosAdmin = usuarioRepository.findByRol(Rol.ADMIN, PageRequest.of(0, 10));
-        Page<Usuario> usuariosUser = usuarioRepository.findByRol(Rol.USER, PageRequest.of(0, 10));
+        Page<Usuario> usuariosAdmin = usuarioRepository.findByRolesContains(Rol.ADMIN, PageRequest.of(0, 10));
+        Page<Usuario> usuariosCliente = usuarioRepository.findByRolesContains(Rol.CLIENTE, PageRequest.of(0, 10));
 
         // Assert
         assertThat(usuariosAdmin.getContent()).hasSize(1);
         assertThat(usuariosAdmin.getContent().get(0).getUsername()).isEqualTo("testuser2");
-        assertThat(usuariosUser.getContent()).hasSize(1);
-        assertThat(usuariosUser.getContent().get(0).getUsername()).isEqualTo("testuser1");
+        assertThat(usuariosCliente.getContent()).hasSize(1);
+        assertThat(usuariosCliente.getContent().get(0).getUsername()).isEqualTo("testuser1");
     }
 
     @Test
@@ -159,13 +157,13 @@ class UsuarioRepositoryTest {
 
     @Test
     @DisplayName("Debe contar usuarios por rol")
-    void countByRol_DebeContarUsuarios() {
+    void countByRolesContains_DebeContarUsuarios() {
         // Act
-        long cantidadAdmin = usuarioRepository.countByRol(Rol.ADMIN);
-        long cantidadUser = usuarioRepository.countByRol(Rol.USER);
+        long cantidadAdmin = usuarioRepository.countByRolesContains(Rol.ADMIN);
+        long cantidadCliente = usuarioRepository.countByRolesContains(Rol.CLIENTE);
 
         // Assert
         assertThat(cantidadAdmin).isEqualTo(1);
-        assertThat(cantidadUser).isEqualTo(1);
+        assertThat(cantidadCliente).isEqualTo(1);
     }
 } 

@@ -13,14 +13,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -40,6 +40,29 @@ public class AuthController {
         this.jwtTokenProvider = jwtTokenProvider;
         this.usuarioDomainService = usuarioDomainService;
         this.usuarioMapper = usuarioMapper;
+    }
+
+    @GetMapping("/usuarios")
+    @Operation(
+        summary = "Listar usuarios",
+        description = "Obtiene la lista de todos los usuarios registrados",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Lista de usuarios obtenida exitosamente",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UsuarioDTO.class)
+                )
+            )
+        }
+    )
+    public ResponseEntity<List<UsuarioDTO>> listarUsuarios() {
+        List<Usuario> usuarios = usuarioDomainService.listarUsuarios();
+        List<UsuarioDTO> usuariosDTO = usuarios.stream()
+                .map(usuarioMapper::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(usuariosDTO);
     }
 
     @PostMapping("/login")
@@ -86,7 +109,36 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    @Operation(summary = "Registrar usuario", description = "Crea una nueva cuenta de usuario")
+    @Operation(
+        summary = "Registrar usuario",
+        description = "Crea una nueva cuenta de usuario",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Usuario registrado exitosamente",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UsuarioDTO.class)
+                )
+            ),
+            @ApiResponse(
+                responseCode = "400",
+                description = "Datos de entrada inválidos",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                )
+            ),
+            @ApiResponse(
+                responseCode = "409",
+                description = "El email o nombre de usuario ya está registrado",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                )
+            )
+        }
+    )
     public ResponseEntity<UsuarioDTO> register(@Valid @RequestBody CreateUsuarioDTO createUsuarioDTO) {
         Usuario usuario = usuarioMapper.toEntity(createUsuarioDTO);
         Usuario usuarioCreado = usuarioDomainService.crearUsuario(usuario);

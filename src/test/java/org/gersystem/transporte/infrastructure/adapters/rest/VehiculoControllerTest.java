@@ -61,7 +61,7 @@ class VehiculoControllerTest {
                     testUser.setUsername(username);
                     testUser.setPassword(passwordEncoder().encode("test123"));
                     testUser.setEmail("test@example.com");
-                    testUser.setRol(Rol.ADMIN);
+                    testUser.setRoles(List.of(Rol.ADMIN));
                     testUser.setActivo(true);
                     return testUser;
                 }
@@ -157,7 +157,7 @@ class VehiculoControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithMockUser(roles = "CLIENTE")
     @DisplayName("Debe obtener un vehículo por ID exitosamente")
     void obtenerVehiculo_DebeObtenerExitosamente() throws Exception {
         given(vehiculoApplicationService.obtenerVehiculoPorId(1L)).willReturn(vehiculoDTO);
@@ -170,7 +170,7 @@ class VehiculoControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithMockUser(roles = "CLIENTE")
     @DisplayName("Debe listar vehículos paginados")
     void listarVehiculos_DebeListarPaginado() throws Exception {
         Page<VehiculoDTO> page = new PageImpl<>(List.of(vehiculoDTO));
@@ -203,7 +203,7 @@ class VehiculoControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithMockUser(roles = "CLIENTE")
     @DisplayName("Debe devolver 403 cuando no tiene permisos")
     void accederSinAutorizacion_DebeRetornar403() throws Exception {
         mockMvc.perform(post("/api/v1/vehiculos")
