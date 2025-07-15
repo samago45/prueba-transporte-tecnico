@@ -10,6 +10,12 @@ public interface PedidoMapper {
 
     @Mapping(target = "vehiculo", source = "vehiculo")
     @Mapping(target = "conductor", source = "conductor")
+    @Named("excludeAuditing")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "descripcion", source = "descripcion")
+    @Mapping(target = "peso", source = "peso")
+    @Mapping(target = "estado", source = "estado")
     PedidoDTO toDto(Pedido pedido);
 
     @Mapping(target = "id", ignore = true)

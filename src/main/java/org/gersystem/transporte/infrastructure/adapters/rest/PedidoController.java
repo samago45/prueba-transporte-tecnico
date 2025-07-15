@@ -10,6 +10,7 @@ import org.gersystem.transporte.domain.model.EstadoPedido;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreatePedidoDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.PedidoDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.mapper.PedidoMapper;
+import org.gersystem.transporte.infrastructure.adapters.rest.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -90,13 +92,20 @@ public class PedidoController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PedidoDTO> actualizarEstado(
             @PathVariable Long id,
-            @RequestParam EstadoPedido estado
+            @Parameter(description = "Nuevo estado del pedido", required = true)
+            @RequestParam(name = "nuevoEstado") EstadoPedido nuevoEstado
     ) {
-        return ResponseEntity.ok(
-            pedidoMapper.toDto(
-                pedidoService.actualizarEstadoPedido(id, estado)
-            )
-        );
+        try {
+            return ResponseEntity.ok(
+                pedidoMapper.toDto(
+                    pedidoService.actualizarEstadoPedido(id, nuevoEstado)
+                )
+            );
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(e.getMessage());
+        } catch (IllegalStateException e) {
+            throw new BusinessException("Error al actualizar estado: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")

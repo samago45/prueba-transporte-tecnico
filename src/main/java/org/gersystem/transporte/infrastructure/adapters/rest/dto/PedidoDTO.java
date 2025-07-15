@@ -19,6 +19,8 @@ public class PedidoDTO {
         private Long id;
         private String placa;
         private BigDecimal capacidad;
+        private boolean activo;
+        private Long conductorId;
     }
 
     @Data
@@ -26,5 +28,6 @@ public class PedidoDTO {
         private Long id;
         private String nombre;
         private String licencia;
+        private boolean activo;
     }
 } 
