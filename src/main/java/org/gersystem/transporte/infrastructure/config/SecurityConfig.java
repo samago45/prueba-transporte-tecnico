@@ -33,12 +33,24 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final SecurityExceptionLogger securityExceptionLogger;
 
+    private static final String[] AUTH_WHITELIST = {
+        "/api/v1/auth/**",
+        "/v3/api-docs/**",
+        "/v3/api-docs.yaml",
+        "/swagger-ui/**",
+        "/swagger-ui.html",
+        "/swagger-resources/**",
+        "/webjars/**",
+        "/api-docs/**",
+        "/api-docs/swagger-config"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .requestMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

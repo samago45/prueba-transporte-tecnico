@@ -1,29 +1,55 @@
+version: '3.8'
+
 services:
   mysql:
     image: 'mysql:8.0'
     environment:
-      - 'MYSQL_DATABASE=mydatabase'
-      - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
-      - 'MYSQL_USER=myuser'
+      - 'MYSQL_DATABASE=appdb'
+      - 'MYSQL_PASSWORD=secretAppPwd'
+      - 'MYSQL_ROOT_PASSWORD=rootpassword'
+      - 'MYSQL_USER=appuser'
     ports:
-      - '3306:3306'
+      - '3307:3306'
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./src/main/resources/db/migration:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+      interval: 5s
 
   transporte-app:
     build: .
     ports:
-      - '8080:8080'
+      - '8081:8081'
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/mydatabase?useSSL=false&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=myuser
-      - SPRING_DATASOURCE_PASSWORD=secret
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/appdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Asuncion
+      - SPRING_DATASOURCE_USERNAME=appuser
+      - SPRING_DATASOURCE_PASSWORD=secretAppPwd
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - JWT_SECRET=your-super-secret-key-that-is-long-enough-for-hs512-algorithm-for-docker
-      - JWT_EXPIRATION_IN_MS=86400000
+      - SPRING_JPA_SHOW_SQL=true
+      - JWT_SECRET=secretoSuperSecretoQueDebeEstarEnVariablesDeEntorno
+      - JWT_EXPIRATION_IN_MS=3600000
+      - SPRING_FLYWAY_ENABLED=true
+      - SPRING_FLYWAY_LOCATIONS=classpath:db/migration
+      - SPRING_FLYWAY_BASELINE_ON_MIGRATE=true
+      - SPRINGDOC_SWAGGER_UI_PATH=/swagger-ui.html
+      - SPRINGDOC_API_DOCS_PATH=/api-docs
+      - SPRINGDOC_SWAGGER_UI_CONFIGURL=/api-docs/swagger-config
+      - SPRINGDOC_SWAGGER_UI_URL=/api-docs
+      - SPRINGDOC_SWAGGER_UI_DISABLE_SWAGGER_DEFAULT_URL=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./src/main/resources/db/migration:/app/db/migration
 
 volumes:
   mysql-data:
