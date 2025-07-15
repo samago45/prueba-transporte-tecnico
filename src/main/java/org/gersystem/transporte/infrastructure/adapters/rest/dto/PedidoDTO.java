@@ -4,7 +4,6 @@ import lombok.Data;
 import org.gersystem.transporte.domain.model.EstadoPedido;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 public class PedidoDTO {
@@ -14,8 +13,21 @@ public class PedidoDTO {
     private EstadoPedido estado;
     private VehiculoDTO vehiculo;
     private ConductorDTO conductor;
-    private String createdBy;
-    private LocalDateTime createdDate;
-    private String lastModifiedBy;
-    private LocalDateTime lastModifiedDate;
+
+    @Data
+    public static class VehiculoDTO {
+        private Long id;
+        private String placa;
+        private BigDecimal capacidad;
+        private boolean activo;
+        private Long conductorId;
+    }
+
+    @Data
+    public static class ConductorDTO {
+        private Long id;
+        private String nombre;
+        private String licencia;
+        private boolean activo;
+    }
 } 

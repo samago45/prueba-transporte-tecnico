@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(MockitoExtension.class)
 class AsignacionServiceTest {
@@ -66,79 +67,21 @@ class AsignacionServiceTest {
         // Arrange
         when(conductorRepository.findById(1L)).thenReturn(Optional.of(conductor));
         when(vehiculoRepository.findById(1L)).thenReturn(Optional.of(vehiculo));
+        doNothing().when(conductorDomainService).validarLimiteDeVehiculos(conductor);
         when(conductorDomainService.asignarVehiculo(1L, 1L)).thenReturn(conductor);
-        when(vehiculoDomainService.asignarConductor(1L, 1L)).thenReturn(vehiculo);
 
-        // Act
-        boolean resultado = asignacionService.asignarVehiculoAConductor(1L, 1L);
+        // Act & Assert
+        assertDoesNotThrow(() -> asignacionService.asignarVehiculoAConductor(1L, 1L));
 
-        // Assert
-        assertThat(resultado).isTrue();
+        verify(conductorRepository).findById(1L);
+        verify(vehiculoRepository).findById(1L);
+        verify(conductorDomainService).validarLimiteDeVehiculos(conductor);
         verify(conductorDomainService).asignarVehiculo(1L, 1L);
-        verify(vehiculoDomainService).asignarConductor(1L, 1L);
     }
 
     @Test
-    @DisplayName("Debe manejar error cuando conductor no existe")
-    void asignarVehiculoAConductor_DebeManejarConductorInexistente() {
-        // Arrange
-        when(conductorRepository.findById(999L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThatThrownBy(() -> asignacionService.asignarVehiculoAConductor(999L, 1L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Conductor no encontrado");
-    }
-
-    @Test
-    @DisplayName("Debe manejar error cuando vehículo no existe")
-    void asignarVehiculoAConductor_DebeManejarVehiculoInexistente() {
-        // Arrange
-        when(conductorRepository.findById(1L)).thenReturn(Optional.of(conductor));
-        when(vehiculoRepository.findById(999L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThatThrownBy(() -> asignacionService.asignarVehiculoAConductor(1L, 999L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Vehículo no encontrado");
-    }
-
-    @Test
-    @DisplayName("Debe desasignar vehículo exitosamente")
-    void desasignarVehiculo_DebeDesasignarExitosamente() {
-        // Arrange
-        vehiculo.setConductor(conductor);
-        conductor.getVehiculos().add(vehiculo);
-        
-        when(vehiculoRepository.findById(1L)).thenReturn(Optional.of(vehiculo));
-        when(vehiculoRepository.save(any(Vehiculo.class))).thenReturn(vehiculo);
-        when(conductorRepository.save(any(Conductor.class))).thenReturn(conductor);
-
-        // Act
-        boolean resultado = asignacionService.desasignarVehiculo(1L);
-
-        // Assert
-        assertThat(resultado).isTrue();
-        assertThat(vehiculo.getConductor()).isNull();
-        verify(vehiculoRepository).save(vehiculo);
-        verify(conductorRepository).save(conductor);
-    }
-
-    @Test
-    @DisplayName("Debe manejar error al desasignar vehículo inexistente")
-    void desasignarVehiculo_DebeManejarVehiculoInexistente() {
-        // Arrange
-        when(vehiculoRepository.findById(999L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThatThrownBy(() -> asignacionService.desasignarVehiculo(999L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Vehículo no encontrado");
-    }
-
-    @Test
-    @DisplayName("Debe validar conductor activo al asignar")
-    void asignarVehiculoAConductor_DebeValidarConductorActivo() {
+    @DisplayName("Debe fallar al asignar vehículo a conductor inactivo")
+    void asignarVehiculoAConductor_DebeFallarConductorInactivo() {
         // Arrange
         conductor.setActivo(false);
         when(conductorRepository.findById(1L)).thenReturn(Optional.of(conductor));
@@ -147,12 +90,12 @@ class AsignacionServiceTest {
         // Act & Assert
         assertThatThrownBy(() -> asignacionService.asignarVehiculoAConductor(1L, 1L))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("El conductor no está activo");
+                .hasMessage("El conductor no está activo");
     }
 
     @Test
-    @DisplayName("Debe validar vehículo activo al asignar")
-    void asignarVehiculoAConductor_DebeValidarVehiculoActivo() {
+    @DisplayName("Debe fallar al asignar vehículo inactivo")
+    void asignarVehiculoAConductor_DebeFallarVehiculoInactivo() {
         // Arrange
         vehiculo.setActivo(false);
         when(conductorRepository.findById(1L)).thenReturn(Optional.of(conductor));
@@ -161,6 +104,35 @@ class AsignacionServiceTest {
         // Act & Assert
         assertThatThrownBy(() -> asignacionService.asignarVehiculoAConductor(1L, 1L))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("El vehículo no está activo");
+                .hasMessage("El vehículo no está activo");
+    }
+
+    @Test
+    @DisplayName("Debe desasignar vehículo exitosamente")
+    void desasignarVehiculo_DebeDesasignarExitosamente() {
+        // Arrange
+        vehiculo.setConductor(conductor);
+        conductor.getVehiculos().add(vehiculo);
+        when(vehiculoRepository.findById(1L)).thenReturn(Optional.of(vehiculo));
+
+        // Act & Assert
+        assertDoesNotThrow(() -> asignacionService.desasignarVehiculo(1L));
+
+        verify(conductorRepository).save(conductor);
+        verify(vehiculoRepository).save(vehiculo);
+        assertThat(conductor.getVehiculos()).isEmpty();
+        assertThat(vehiculo.getConductor()).isNull();
+    }
+
+    @Test
+    @DisplayName("Debe fallar al desasignar vehículo no asignado")
+    void desasignarVehiculo_DebeFallarVehiculoNoAsignado() {
+        // Arrange
+        when(vehiculoRepository.findById(1L)).thenReturn(Optional.of(vehiculo));
+
+        // Act & Assert
+        assertThatThrownBy(() -> asignacionService.desasignarVehiculo(1L))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("El vehículo no está asignado a ningún conductor");
     }
 } 

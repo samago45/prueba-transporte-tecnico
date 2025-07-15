@@ -10,10 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -33,6 +35,7 @@ class MantenimientoIntegrationTest {
 
     private Vehiculo vehiculo;
     private Mantenimiento mantenimiento;
+    private String fechaProgramada;
 
     @BeforeEach
     void setUp() {
@@ -42,6 +45,9 @@ class MantenimientoIntegrationTest {
         vehiculo.setCapacidad(new BigDecimal("1000.00"));
         vehiculo.setActivo(true);
         vehiculo = vehiculoRepository.save(vehiculo);
+
+        // Configurar fecha programada
+        fechaProgramada = LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ISO_DATE);
 
         // Crear mantenimiento
         mantenimiento = new Mantenimiento();
@@ -55,9 +61,10 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe completar flujo de mantenimiento exitosamente")
     @Transactional
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoCompletoMantenimiento_DebeCompletarseCorrectamente() {
         // Act - Programar mantenimiento
-        Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(mantenimiento);
+        Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(mantenimiento, vehiculo.getId(), fechaProgramada);
 
         // Assert - Verificar programación
         assertThat(mantenimientoCreado).isNotNull();
@@ -83,13 +90,14 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe manejar mantenimiento de vehículo inactivo")
     @Transactional
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoMantenimiento_DebeManejarVehiculoInactivo() {
         // Arrange - Desactivar vehículo
         vehiculo.setActivo(false);
         vehiculo = vehiculoRepository.save(vehiculo);
 
         // Act & Assert - Intentar programar mantenimiento
-        assertThatThrownBy(() -> mantenimientoDomainService.programarMantenimiento(mantenimiento))
+        assertThatThrownBy(() -> mantenimientoDomainService.programarMantenimiento(mantenimiento, vehiculo.getId(), fechaProgramada))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("El vehículo no está activo");
     }
@@ -97,23 +105,26 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe validar transiciones de estado correctamente")
     @Transactional
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoMantenimiento_DebeValidarTransicionesEstado() {
         // Arrange - Crear mantenimiento inicial
-        Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(mantenimiento);
+        mantenimiento.setEstado(EstadoMantenimiento.PENDIENTE);
+        Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(mantenimiento, vehiculo.getId(), fechaProgramada);
 
         // Act & Assert - Intentar completar sin iniciar
         assertThatThrownBy(() -> mantenimientoDomainService
                 .actualizarEstadoMantenimiento(mantenimientoCreado.getId(), EstadoMantenimiento.COMPLETADO))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Transición de estado inválida");
+                .hasMessageContaining("Un mantenimiento debe pasar por el estado EN_PROCESO antes de completarse");
     }
 
     @Test
     @DisplayName("Debe manejar múltiples mantenimientos para un vehículo")
     @Transactional
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoMantenimiento_DebeManejarMultiplesMantenimientos() {
         // Act - Programar primer mantenimiento
-        Mantenimiento primerMantenimiento = mantenimientoDomainService.programarMantenimiento(mantenimiento);
+        Mantenimiento primerMantenimiento = mantenimientoDomainService.programarMantenimiento(mantenimiento, vehiculo.getId(), fechaProgramada);
 
         // Arrange - Crear segundo mantenimiento
         Mantenimiento segundoMantenimiento = new Mantenimiento();
@@ -123,9 +134,12 @@ class MantenimientoIntegrationTest {
         segundoMantenimiento.setFechaProgramada(LocalDateTime.now().plusDays(2));
         segundoMantenimiento.setVehiculo(vehiculo);
 
+        // Configurar fecha para segundo mantenimiento
+        String fechaSegundoMantenimiento = LocalDateTime.now().plusDays(2).format(DateTimeFormatter.ISO_DATE);
+
         // Act - Programar segundo mantenimiento
         Mantenimiento segundoMantenimientoCreado = mantenimientoDomainService
-                .programarMantenimiento(segundoMantenimiento);
+                .programarMantenimiento(segundoMantenimiento, vehiculo.getId(), fechaSegundoMantenimiento);
 
         // Assert - Verificar ambos mantenimientos
         assertThat(mantenimientoRepository.findByVehiculo(vehiculo, null).getContent())
@@ -137,9 +151,10 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe cancelar mantenimiento correctamente")
     @Transactional
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoMantenimiento_DebeCancelarCorrectamente() {
         // Arrange - Crear mantenimiento inicial
-        Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(mantenimiento);
+        Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(mantenimiento, vehiculo.getId(), fechaProgramada);
 
         // Act - Cancelar mantenimiento
         Mantenimiento mantenimientoCancelado = mantenimientoDomainService
