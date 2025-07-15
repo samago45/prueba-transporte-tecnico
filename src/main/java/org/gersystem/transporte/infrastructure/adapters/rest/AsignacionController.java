@@ -29,7 +29,7 @@ public class AsignacionController {
     @PostMapping("/conductor/{conductorId}/vehiculo/{vehiculoId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> asignarVehiculo(@PathVariable Long conductorId, @PathVariable Long vehiculoId) {
-        asignacionService.asignarVehiculo(conductorId, vehiculoId);
+        asignacionService.asignarVehiculoAConductor(conductorId, vehiculoId);
         return ResponseEntity.noContent().build();
     }
 

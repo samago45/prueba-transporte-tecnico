@@ -2,6 +2,7 @@ package org.gersystem.transporte.infrastructure.adapters.rest.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
@@ -9,7 +10,9 @@ import java.math.BigDecimal;
 
 @Data
 public class UpdateVehiculoDTO {
+    
     @NotBlank(message = "La placa es requerida")
+    @Pattern(regexp = "[A-Z]{3}\\d{3}", message = "La placa debe tener el formato AAA999")
     private String placa;
     
     @NotNull(message = "La capacidad es requerida")

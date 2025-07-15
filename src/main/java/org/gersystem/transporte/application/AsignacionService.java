@@ -1,69 +1,60 @@
 package org.gersystem.transporte.application;
 
+import lombok.RequiredArgsConstructor;
 import org.gersystem.transporte.domain.model.Conductor;
 import org.gersystem.transporte.domain.model.Vehiculo;
 import org.gersystem.transporte.domain.repository.ConductorRepository;
 import org.gersystem.transporte.domain.repository.VehiculoRepository;
 import org.gersystem.transporte.domain.service.ConductorDomainService;
-import org.gersystem.transporte.infrastructure.adapters.rest.exception.ResourceNotFoundException;
-import org.springframework.cache.annotation.CacheEvict;
+import org.gersystem.transporte.domain.service.VehiculoDomainService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class AsignacionService {
 
-    private final VehiculoRepository vehiculoRepository;
     private final ConductorRepository conductorRepository;
+    private final VehiculoRepository vehiculoRepository;
     private final ConductorDomainService conductorDomainService;
-
-    public AsignacionService(VehiculoRepository vehiculoRepository,
-                             ConductorRepository conductorRepository,
-                             ConductorDomainService conductorDomainService) {
-        this.vehiculoRepository = vehiculoRepository;
-        this.conductorRepository = conductorRepository;
-        this.conductorDomainService = conductorDomainService;
-    }
+    private final VehiculoDomainService vehiculoDomainService;
 
     @Transactional
-    @CacheEvict(value = "vehiculosLibres", allEntries = true)
-    public void asignarVehiculo(Long conductorId, Long vehiculoId) {
+    public boolean asignarVehiculoAConductor(Long conductorId, Long vehiculoId) {
         Conductor conductor = conductorRepository.findById(conductorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Conductor no encontrado con id: " + conductorId));
-
+                .orElseThrow(() -> new IllegalArgumentException("Conductor no encontrado"));
+        
         Vehiculo vehiculo = vehiculoRepository.findById(vehiculoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Vehículo no encontrado con id: " + vehiculoId));
+                .orElseThrow(() -> new IllegalArgumentException("Vehículo no encontrado"));
 
         if (!conductor.isActivo()) {
-            throw new IllegalStateException("No se puede asignar un vehículo a un conductor inactivo.");
+            throw new IllegalStateException("El conductor no está activo");
         }
 
         if (!vehiculo.isActivo()) {
-            throw new IllegalStateException("No se puede asignar un vehículo inactivo.");
-        }
-        
-        if (vehiculo.getConductor() != null) {
-            throw new IllegalStateException("El vehículo ya está asignado a otro conductor.");
+            throw new IllegalStateException("El vehículo no está activo");
         }
 
-        conductorDomainService.validarLimiteDeVehiculos(conductor);
+        conductorDomainService.asignarVehiculo(conductorId, vehiculoId);
+        vehiculoDomainService.asignarConductor(vehiculoId, conductorId);
 
-        vehiculo.setConductor(conductor);
-        vehiculoRepository.save(vehiculo);
+        return true;
     }
 
     @Transactional
-    @CacheEvict(value = "vehiculosLibres", allEntries = true)
-    public void desasignarVehiculo(Long vehiculoId) {
+    public boolean desasignarVehiculo(Long vehiculoId) {
         Vehiculo vehiculo = vehiculoRepository.findById(vehiculoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Vehículo no encontrado con id: " + vehiculoId));
+                .orElseThrow(() -> new IllegalArgumentException("Vehículo no encontrado"));
 
-        if (vehiculo.getConductor() == null) {
-            // El vehículo ya está libre, no hay nada que hacer.
-            return;
+        if (vehiculo.getConductor() != null) {
+            Conductor conductor = vehiculo.getConductor();
+            conductor.getVehiculos().remove(vehiculo);
+            vehiculo.setConductor(null);
+            
+            conductorRepository.save(conductor);
+            vehiculoRepository.save(vehiculo);
+            return true;
         }
-
-        vehiculo.setConductor(null);
-        vehiculoRepository.save(vehiculo);
+        return false;
     }
 } 

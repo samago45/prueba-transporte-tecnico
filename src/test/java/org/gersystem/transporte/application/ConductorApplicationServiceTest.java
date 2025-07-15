@@ -1,10 +1,12 @@
 package org.gersystem.transporte.application;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ValidationException;
 import org.gersystem.transporte.domain.model.Conductor;
-import org.gersystem.transporte.domain.model.Vehiculo;
 import org.gersystem.transporte.domain.repository.ConductorRepository;
 import org.gersystem.transporte.domain.service.ConductorDomainService;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.ConductorDTO;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.ConteoVehiculosDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreateConductorDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.UpdateConductorDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.mapper.ConductorMapper;
@@ -19,16 +21,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ValidationException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ConductorApplicationServiceTest {
@@ -52,6 +55,7 @@ class ConductorApplicationServiceTest {
 
     @BeforeEach
     void setUp() {
+        // Configuración de datos de prueba
         conductor = new Conductor();
         conductor.setId(1L);
         conductor.setNombre("Juan Pérez");
@@ -61,12 +65,12 @@ class ConductorApplicationServiceTest {
         conductorDTO = new ConductorDTO();
         conductorDTO.setId(1L);
         conductorDTO.setNombre("Juan Pérez");
-
+        conductorDTO.setLicencia("A12345");
         conductorDTO.setActivo(true);
 
         createConductorDTO = new CreateConductorDTO();
         createConductorDTO.setNombre("Juan Pérez");
- 
+        createConductorDTO.setLicencia("A12345");
 
         updateConductorDTO = new UpdateConductorDTO();
         updateConductorDTO.setNombre("Juan Pérez Actualizado");
@@ -100,7 +104,7 @@ class ConductorApplicationServiceTest {
         // Act & Assert
         assertThatThrownBy(() -> conductorApplicationService.crearConductor(createConductorDTO))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining("formato de licencia");
+                .hasMessageContaining("Formato de licencia inválido");
     }
 
     @Test
@@ -209,5 +213,67 @@ class ConductorApplicationServiceTest {
         assertThat(resultado.getContent()).hasSize(1);
         assertThat(resultado.getContent().get(0).isActivo()).isTrue();
         verify(conductorRepository).findByActivo(true, pageable);
+    }
+
+    @Test
+    @DisplayName("Debe obtener conductores sin vehículos")
+    void obtenerConductoresSinVehiculos_DebeObtenerExitosamente() {
+        // Arrange
+        List<Conductor> conductoresSinVehiculos = Arrays.asList(conductor);
+        when(conductorRepository.findByVehiculosIsEmpty()).thenReturn(conductoresSinVehiculos);
+        when(conductorMapper.toDto(any(Conductor.class))).thenReturn(conductorDTO);
+
+        // Act
+        List<ConductorDTO> resultado = conductorApplicationService.obtenerConductoresSinVehiculos();
+
+        // Assert
+        assertThat(resultado).isNotNull();
+        assertThat(resultado).hasSize(1);
+        verify(conductorRepository).findByVehiculosIsEmpty();
+    }
+
+    @Test
+    @DisplayName("Debe contar vehículos por conductor")
+    void contarVehiculosPorConductor_DebeContarExitosamente() {
+        // Arrange
+        ConteoVehiculosDTO conteo = new ConteoVehiculosDTO(1L, "Juan Pérez", 2L);
+        when(conductorRepository.countVehiculosByConductor()).thenReturn(Arrays.asList(conteo));
+
+        // Act
+        List<ConteoVehiculosDTO> resultado = conductorApplicationService.contarVehiculosPorConductor();
+
+        // Assert
+        assertThat(resultado).isNotNull();
+        assertThat(resultado).hasSize(1);
+        assertThat(resultado.get(0).getCantidadVehiculos()).isEqualTo(2L);
+        verify(conductorRepository).countVehiculosByConductor();
+    }
+
+    @Test
+    @DisplayName("Debe eliminar un conductor lógicamente")
+    void eliminarConductor_DebeEliminarLogicamente() {
+        // Arrange
+        when(conductorRepository.findById(1L)).thenReturn(Optional.of(conductor));
+        when(conductorRepository.save(any(Conductor.class))).thenReturn(conductor);
+
+        // Act
+        conductorApplicationService.eliminarConductor(1L);
+
+        // Assert
+        verify(conductorRepository).findById(1L);
+        verify(conductorRepository).save(any(Conductor.class));
+        assertThat(conductor.isActivo()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Debe lanzar excepción al eliminar conductor inexistente")
+    void eliminarConductor_DebeLanzarExcepcion_CuandoNoExiste() {
+        // Arrange
+        when(conductorRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> conductorApplicationService.eliminarConductor(999L))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("Conductor no encontrado");
     }
 } 

@@ -17,4 +17,7 @@ public class EstadisticasDTO {
     private long pedidosEntregados;
     private BigDecimal pesoTotalTransportado;
     private double promedioVehiculosPorConductor;
+    private double porcentajeConductoresActivos;
+    private double porcentajeVehiculosActivos;
+    private double porcentajePedidosEntregados;
 } 

@@ -1,14 +1,15 @@
 package org.gersystem.transporte.domain.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.gersystem.transporte.domain.model.Conductor;
 import org.gersystem.transporte.domain.model.Vehiculo;
 import org.gersystem.transporte.domain.repository.ConductorRepository;
+import org.gersystem.transporte.domain.repository.VehiculoRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 public class ConductorDomainService {
 
     private final ConductorRepository conductorRepository;
+    private final VehiculoRepository vehiculoRepository;
 
     @Value("${conductor.max.vehiculos:3}")
     private int maxVehiculosPorConductor;
@@ -64,6 +66,31 @@ public class ConductorDomainService {
                 return conductorRepository.save(conductor);
             })
             .orElseThrow(() -> new EntityNotFoundException("Conductor no encontrado"));
+    }
+
+    @Transactional
+    public Conductor asignarVehiculo(Long conductorId, Long vehiculoId) {
+        Conductor conductor = conductorRepository.findById(conductorId)
+                .orElseThrow(() -> new EntityNotFoundException("Conductor no encontrado"));
+        
+        Vehiculo vehiculo = vehiculoRepository.findById(vehiculoId)
+                .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado"));
+
+        if (!conductor.isActivo()) {
+            throw new IllegalStateException("El conductor no está activo");
+        }
+
+        if (!vehiculo.isActivo()) {
+            throw new IllegalStateException("El vehículo no está activo");
+        }
+
+        conductor.getVehiculos().add(vehiculo);
+        vehiculo.setConductor(conductor);
+
+        conductorRepository.save(conductor);
+        vehiculoRepository.save(vehiculo);
+
+        return conductor;
     }
 
     public void validarLimiteDeVehiculos(Conductor conductor) {

@@ -67,15 +67,15 @@ public class UsuarioDomainService {
     }
 
     @Transactional
-    public void cambiarPassword(Long usuarioId, String oldPassword, String newPassword) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
+    public Usuario cambiarPassword(Long id, String oldPassword, String newPassword) {
+        Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
         if (!passwordEncoder.matches(oldPassword, usuario.getPassword())) {
-            throw new IllegalStateException("Contraseña actual incorrecta");
+            throw new IllegalArgumentException("Contraseña actual incorrecta");
         }
 
         usuario.setPassword(passwordEncoder.encode(newPassword));
-        usuarioRepository.save(usuario);
+        return usuarioRepository.save(usuario);
     }
 } 
