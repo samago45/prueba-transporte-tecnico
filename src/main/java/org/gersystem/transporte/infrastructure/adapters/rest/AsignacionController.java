@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.gersystem.transporte.application.AsignacionService;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.ErrorResponseDTO;
-import org.gersystem.transporte.infrastructure.adapters.rest.exception.ValidationException;
+import org.gersystem.transporte.infrastructure.adapters.rest.exception.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -85,9 +85,9 @@ public class AsignacionController {
             asignacionService.asignarVehiculoAConductor(conductorId, vehiculoId);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
-            throw new ValidationException("Error en la asignación: " + e.getMessage());
+            throw new ResourceNotFoundException(e.getMessage());
         } catch (IllegalStateException e) {
-            throw new ValidationException("No se puede realizar la asignación: " + e.getMessage());
+            throw new IllegalStateException("No se puede realizar la asignación: " + e.getMessage());
         }
     }
 
@@ -141,9 +141,9 @@ public class AsignacionController {
             asignacionService.desasignarVehiculo(vehiculoId);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
-            throw new ValidationException("Error en la desasignación: " + e.getMessage());
+            throw new ResourceNotFoundException(e.getMessage());
         } catch (IllegalStateException e) {
-            throw new ValidationException("No se puede realizar la desasignación: " + e.getMessage());
+            throw new IllegalStateException("No se puede realizar la desasignación: " + e.getMessage());
         }
     }
 } 

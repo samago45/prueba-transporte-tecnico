@@ -92,6 +92,12 @@ public class ConductorDomainService {
             throw new IllegalStateException("El vehículo no está activo");
         }
 
+        if (vehiculo.getConductor() != null) {
+            throw new IllegalStateException("El vehículo ya está asignado a otro conductor");
+        }
+
+        validarLimiteDeVehiculos(conductor);
+
         if (conductor.getVehiculos() == null) {
             conductor.setVehiculos(new ArrayList<>());
         }
