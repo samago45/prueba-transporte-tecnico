@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,7 +44,7 @@ class ConductorDomainServiceTest {
         conductor.setNombre("Juan Pérez");
         conductor.setLicencia("A12345");
         conductor.setActivo(true);
-        conductor.setVehiculos(Collections.emptyList());
+        conductor.setVehiculos(new ArrayList<>()); // Usar ArrayList en lugar de Collections.emptyList()
 
         vehiculo = new Vehiculo();
         vehiculo.setId(1L);
@@ -83,6 +83,22 @@ class ConductorDomainServiceTest {
     }
 
     @Test
+    @DisplayName("Debe crear conductor con formato de licencia válido")
+    void crearConductor_DebeCrearConLicenciaValida() {
+        // Arrange
+        conductor.setLicencia("A12345"); // Formato válido
+        when(conductorRepository.save(any(Conductor.class))).thenReturn(conductor);
+
+        // Act
+        Conductor resultado = conductorDomainService.crearConductor(conductor);
+
+        // Assert
+        assertThat(resultado).isNotNull();
+        assertThat(resultado.getLicencia()).isEqualTo("A12345");
+        verify(conductorRepository).save(conductor);
+    }
+
+    @Test
     @DisplayName("Debe actualizar conductor exitosamente")
     void actualizarConductor_DebeActualizarExitosamente() {
         // Arrange
@@ -91,6 +107,7 @@ class ConductorDomainServiceTest {
         conductorActualizado.setNombre("Juan Pérez Actualizado");
         conductorActualizado.setLicencia("B67890");
         conductorActualizado.setActivo(true);
+        conductorActualizado.setVehiculos(new ArrayList<>()); // Usar ArrayList
 
         when(conductorRepository.findById(1L)).thenReturn(Optional.of(conductor));
         when(conductorRepository.save(any(Conductor.class))).thenReturn(conductorActualizado);

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -30,6 +31,6 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     
     Page<Pedido> findByConductorId(Long conductorId, Pageable pageable);
 
-    @Query("SELECT COALESCE(SUM(p.peso), 0) FROM Pedido p WHERE p.estado = 'ENTREGADO'")
+    @Query("SELECT COALESCE(SUM(p.peso), 0) FROM Pedido p WHERE p.estado = :#{T(org.gersystem.transporte.domain.model.EstadoPedido).ENTREGADO}")
     BigDecimal calcularPesoTotalTransportado();
 } 

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Import(TestJpaConfig.class)
 @ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application-test.properties")
 class MantenimientoRepositoryTest {
 
     @Autowired

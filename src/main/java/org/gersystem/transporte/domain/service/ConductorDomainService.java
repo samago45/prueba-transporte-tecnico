@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,10 +32,17 @@ public class ConductorDomainService {
 
     @Transactional
     public Conductor crearConductor(Conductor conductor) {
+        validarFormatoLicencia(conductor.getLicencia());
         if (!conductor.isActivo()) {
             conductor.setActivo(true);
         }
         return conductorRepository.save(conductor);
+    }
+
+    private void validarFormatoLicencia(String licencia) {
+        if (licencia == null || !licencia.matches("^[A-Z]\\d{5}$")) {
+            throw new IllegalArgumentException("Formato de licencia inválido");
+        }
     }
 
     @Transactional
@@ -72,16 +80,20 @@ public class ConductorDomainService {
     public Conductor asignarVehiculo(Long conductorId, Long vehiculoId) {
         Conductor conductor = conductorRepository.findById(conductorId)
                 .orElseThrow(() -> new EntityNotFoundException("Conductor no encontrado"));
-        
-        Vehiculo vehiculo = vehiculoRepository.findById(vehiculoId)
-                .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado"));
 
         if (!conductor.isActivo()) {
             throw new IllegalStateException("El conductor no está activo");
         }
 
+        Vehiculo vehiculo = vehiculoRepository.findById(vehiculoId)
+                .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado"));
+
         if (!vehiculo.isActivo()) {
             throw new IllegalStateException("El vehículo no está activo");
+        }
+
+        if (conductor.getVehiculos() == null) {
+            conductor.setVehiculos(new ArrayList<>());
         }
 
         conductor.getVehiculos().add(vehiculo);

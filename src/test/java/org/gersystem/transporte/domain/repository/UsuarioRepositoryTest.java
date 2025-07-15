@@ -13,8 +13,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Import(TestJpaConfig.class)
 @ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application-test.properties")
 class UsuarioRepositoryTest {
 
     @Autowired
@@ -39,7 +42,9 @@ class UsuarioRepositoryTest {
         usuario1.setUsername("testuser1");
         usuario1.setEmail("test1@example.com");
         usuario1.setPassword("password123");
+        usuario1.setNombre("Test User One");
         usuario1.setRol(Rol.USER);
+        usuario1.setRoles(List.of(Rol.USER)); // Agregando lista de roles
         usuario1.setActivo(true);
         usuario1.setRefreshToken("refresh.token.1");
         usuario1.setRefreshTokenExpiryDate(LocalDateTime.now().plusDays(7));
@@ -49,7 +54,9 @@ class UsuarioRepositoryTest {
         usuario2.setUsername("testuser2");
         usuario2.setEmail("test2@example.com");
         usuario2.setPassword("password456");
+        usuario2.setNombre("Test User Two");
         usuario2.setRol(Rol.ADMIN);
+        usuario2.setRoles(List.of(Rol.ADMIN)); // Agregando lista de roles
         usuario2.setActivo(true);
         entityManager.persist(usuario2);
 

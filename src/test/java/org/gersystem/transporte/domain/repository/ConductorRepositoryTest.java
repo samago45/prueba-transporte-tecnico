@@ -14,15 +14,19 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import(TestJpaConfig.class)
 @ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application-test.properties")
 class ConductorRepositoryTest {
 
     @Autowired
@@ -126,11 +130,21 @@ class ConductorRepositoryTest {
         List<ConteoVehiculosDTO> conteos = conductorRepository.countVehiculosByConductor();
 
         // Assert
-        assertThat(conteos).hasSize(1); // Solo conductor1 tiene vehículos
-        ConteoVehiculosDTO conteo = conteos.get(0);
-        assertThat(conteo.getConductorId()).isEqualTo(conductor1.getId());
-        assertThat(conteo.getNombreConductor()).isEqualTo("Juan Pérez");
-        assertThat(conteo.getCantidadVehiculos()).isEqualTo(2L);
+        assertThat(conteos).hasSize(2); // Debe encontrar ambos conductores
+        
+        // Convertir la lista a un Map para facilitar las aserciones
+        Map<String, ConteoVehiculosDTO> conteoPorNombre = conteos.stream()
+            .collect(Collectors.toMap(ConteoVehiculosDTO::getNombreConductor, dto -> dto));
+        
+        // Verificar conductor con vehículos
+        ConteoVehiculosDTO conteoJuan = conteoPorNombre.get("Juan Pérez");
+        assertThat(conteoJuan).isNotNull();
+        assertThat(conteoJuan.getCantidadVehiculos()).isEqualTo(2L);
+        
+        // Verificar conductor sin vehículos
+        ConteoVehiculosDTO conteoMaria = conteoPorNombre.get("María López");
+        assertThat(conteoMaria).isNotNull();
+        assertThat(conteoMaria.getCantidadVehiculos()).isEqualTo(0L);
     }
 
     @Test

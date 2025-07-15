@@ -3,23 +3,39 @@ package org.gersystem.transporte.infrastructure.adapters.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gersystem.transporte.domain.model.EstadoMantenimiento;
 import org.gersystem.transporte.domain.model.Mantenimiento;
+import org.gersystem.transporte.domain.model.Rol;
 import org.gersystem.transporte.domain.model.TipoMantenimiento;
+import org.gersystem.transporte.domain.model.Usuario;
 import org.gersystem.transporte.domain.model.Vehiculo;
 import org.gersystem.transporte.domain.service.MantenimientoDomainService;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreateMantenimientoDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.MantenimientoDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.mapper.MantenimientoMapper;
+import org.gersystem.transporte.infrastructure.security.JwtAuthenticationFilter;
+import org.gersystem.transporte.infrastructure.security.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +47,56 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MantenimientoController.class)
+@ActiveProfiles("test")
 class MantenimientoControllerTest {
+
+    @TestConfiguration
+    @EnableWebSecurity
+    static class SecurityTestConfig {
+        @Bean
+        public UserDetailsService userDetailsService() {
+            return new UserDetailsService() {
+                @Override
+                public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                    Usuario testUser = new Usuario();
+                    testUser.setId(1L);
+                    testUser.setUsername(username);
+                    testUser.setPassword(passwordEncoder().encode("test123"));
+                    testUser.setEmail("test@example.com");
+                    testUser.setRol(Rol.ADMIN);
+                    testUser.setActivo(true);
+                    return testUser;
+                }
+            };
+        }
+
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+            return new BCryptPasswordEncoder();
+        }
+
+        @Bean
+        public JwtTokenProvider jwtTokenProvider() {
+            return mock(JwtTokenProvider.class);
+        }
+
+        @Bean
+        public JwtAuthenticationFilter jwtAuthenticationFilter() {
+            return new JwtAuthenticationFilter(jwtTokenProvider(), userDetailsService());
+        }
+
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+            http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/api/v1/auth/**").permitAll()
+                    .anyRequest().authenticated()
+                );
+
+            return http.build();
+        }
+    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -152,5 +217,22 @@ class MantenimientoControllerTest {
 
         verify(mantenimientoDomainService).listarMantenimientos(
             eq(1L), eq(EstadoMantenimiento.PENDIENTE), any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("Debe devolver 401 cuando no está autenticado")
+    void accederSinAutenticacion_DebeRetornar401() throws Exception {
+        mockMvc.perform(get("/api/v1/mantenimientos"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    @DisplayName("Debe devolver 403 cuando no tiene permisos")
+    void accederSinAutorizacion_DebeRetornar403() throws Exception {
+        mockMvc.perform(post("/api/v1/mantenimientos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createMantenimientoDTO)))
+                .andExpect(status().isForbidden());
     }
 } 

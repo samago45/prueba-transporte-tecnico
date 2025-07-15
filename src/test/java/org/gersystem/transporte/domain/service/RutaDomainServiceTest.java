@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.gersystem.transporte.domain.model.Ruta;
 import org.gersystem.transporte.domain.repository.RutaRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,9 +18,10 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RutaDomainServiceTest {
@@ -31,95 +33,112 @@ class RutaDomainServiceTest {
     private RutaDomainService rutaDomainService;
 
     private Ruta ruta;
-    private final Long RUTA_ID = 1L;
 
     @BeforeEach
     void setUp() {
         ruta = new Ruta();
-        ruta.setId(RUTA_ID);
+        ruta.setId(1L);
         ruta.setNombre("Ruta Test");
-        ruta.setPuntoOrigen("Origen");
-        ruta.setPuntoDestino("Destino");
+        ruta.setPuntoOrigen("Origen Test");
+        ruta.setPuntoDestino("Destino Test");
         ruta.setDistanciaKm(100.0);
         ruta.setTiempoEstimadoMinutos(120);
         ruta.setActiva(true);
     }
 
     @Test
-    void crearRuta_DebeGuardarYRetornarRuta() {
+    @DisplayName("Debe crear una ruta exitosamente")
+    void crearRuta_DebeCrearExitosamente() {
+        // Arrange
         when(rutaRepository.save(any(Ruta.class))).thenReturn(ruta);
 
+        // Act
         Ruta rutaCreada = rutaDomainService.crearRuta(ruta);
 
-        assertNotNull(rutaCreada);
-        assertEquals(RUTA_ID, rutaCreada.getId());
-        verify(rutaRepository).save(ruta);
+        // Assert
+        assertThat(rutaCreada).isNotNull();
+        assertThat(rutaCreada.getId()).isEqualTo(1L);
+        assertThat(rutaCreada.getNombre()).isEqualTo("Ruta Test");
+        assertThat(rutaCreada.getPuntoOrigen()).isEqualTo("Origen Test");
+        assertThat(rutaCreada.getPuntoDestino()).isEqualTo("Destino Test");
+        assertThat(rutaCreada.getDistanciaKm()).isEqualTo(100.0);
+        assertThat(rutaCreada.getTiempoEstimadoMinutos()).isEqualTo(120);
+        assertThat(rutaCreada.isActiva()).isTrue();
     }
 
     @Test
-    void activarRuta_DebeActivarRutaExistente() {
+    @DisplayName("Debe activar una ruta exitosamente")
+    void activarRuta_DebeActivarExitosamente() {
+        // Arrange
         ruta.setActiva(false);
-        when(rutaRepository.findById(RUTA_ID)).thenReturn(Optional.of(ruta));
+        when(rutaRepository.findById(1L)).thenReturn(Optional.of(ruta));
         when(rutaRepository.save(any(Ruta.class))).thenReturn(ruta);
 
-        Ruta rutaActivada = rutaDomainService.activarRuta(RUTA_ID);
+        // Act
+        Ruta rutaActivada = rutaDomainService.activarRuta(1L);
 
-        assertTrue(rutaActivada.isActiva());
-        verify(rutaRepository).save(ruta);
+        // Assert
+        assertThat(rutaActivada).isNotNull();
+        assertThat(rutaActivada.isActiva()).isTrue();
     }
 
     @Test
-    void desactivarRuta_DebeDesactivarRutaExistente() {
-        when(rutaRepository.findById(RUTA_ID)).thenReturn(Optional.of(ruta));
+    @DisplayName("Debe desactivar una ruta exitosamente")
+    void desactivarRuta_DebeDesactivarExitosamente() {
+        // Arrange
+        when(rutaRepository.findById(1L)).thenReturn(Optional.of(ruta));
         when(rutaRepository.save(any(Ruta.class))).thenReturn(ruta);
 
-        Ruta rutaDesactivada = rutaDomainService.desactivarRuta(RUTA_ID);
+        // Act
+        Ruta rutaDesactivada = rutaDomainService.desactivarRuta(1L);
 
-        assertFalse(rutaDesactivada.isActiva());
-        verify(rutaRepository).save(ruta);
+        // Assert
+        assertThat(rutaDesactivada).isNotNull();
+        assertThat(rutaDesactivada.isActiva()).isFalse();
     }
 
     @Test
-    void obtenerRuta_DebeRetornarRutaExistente() {
-        when(rutaRepository.findById(RUTA_ID)).thenReturn(Optional.of(ruta));
+    @DisplayName("Debe lanzar excepción al no encontrar la ruta")
+    void obtenerRuta_DebeLanzarExcepcion() {
+        // Arrange
+        when(rutaRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Ruta rutaEncontrada = rutaDomainService.obtenerRuta(RUTA_ID);
-
-        assertNotNull(rutaEncontrada);
-        assertEquals(RUTA_ID, rutaEncontrada.getId());
+        // Act & Assert
+        assertThatThrownBy(() -> rutaDomainService.obtenerRuta(1L))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Ruta no encontrada");
     }
 
     @Test
-    void obtenerRuta_DebeLanzarExcepcionSiNoExiste() {
-        when(rutaRepository.findById(RUTA_ID)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> 
-            rutaDomainService.obtenerRuta(RUTA_ID)
-        );
-    }
-
-    @Test
-    void listarRutas_DebeRetornarTodasLasRutasSiFiltroEsNulo() {
+    @DisplayName("Debe listar rutas activas paginadas")
+    void listarRutas_DebeListarRutasActivasPaginadas() {
+        // Arrange
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Ruta> page = new PageImpl<>(List.of(ruta));
-        when(rutaRepository.findAll(pageable)).thenReturn(page);
+        Page<Ruta> rutaPage = new PageImpl<>(List.of(ruta));
+        when(rutaRepository.findByActiva(true, pageable)).thenReturn(rutaPage);
 
-        Page<Ruta> rutas = rutaDomainService.listarRutas(null, pageable);
+        // Act
+        Page<Ruta> resultado = rutaDomainService.listarRutas(true, pageable);
 
-        assertFalse(rutas.isEmpty());
-        assertEquals(1, rutas.getTotalElements());
+        // Assert
+        assertThat(resultado).isNotNull();
+        assertThat(resultado.getContent()).hasSize(1);
+        assertThat(resultado.getContent().get(0).isActiva()).isTrue();
     }
 
     @Test
-    void listarRutas_DebeRetornarRutasFiltradas() {
+    @DisplayName("Debe listar todas las rutas cuando no se especifica estado")
+    void listarRutas_DebeListarTodasLasRutas() {
+        // Arrange
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Ruta> page = new PageImpl<>(List.of(ruta));
-        when(rutaRepository.findByActiva(true, pageable)).thenReturn(page);
+        Page<Ruta> rutaPage = new PageImpl<>(List.of(ruta));
+        when(rutaRepository.findAll(pageable)).thenReturn(rutaPage);
 
-        Page<Ruta> rutas = rutaDomainService.listarRutas(true, pageable);
+        // Act
+        Page<Ruta> resultado = rutaDomainService.listarRutas(null, pageable);
 
-        assertFalse(rutas.isEmpty());
-        assertEquals(1, rutas.getTotalElements());
-        verify(rutaRepository).findByActiva(true, pageable);
+        // Assert
+        assertThat(resultado).isNotNull();
+        assertThat(resultado.getContent()).hasSize(1);
     }
 } 

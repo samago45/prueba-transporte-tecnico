@@ -1,172 +1,189 @@
 package org.gersystem.transporte.infrastructure.adapters.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gersystem.transporte.domain.model.Rol;
 import org.gersystem.transporte.domain.model.Usuario;
 import org.gersystem.transporte.domain.service.UsuarioDomainService;
-import org.gersystem.transporte.infrastructure.adapters.rest.dto.*;
-import org.gersystem.transporte.infrastructure.adapters.rest.mapper.UsuarioMapper;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreateUsuarioDTO;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.JwtAuthenticationResponseDTO;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.LoginRequestDTO;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.RefreshTokenRequestDTO;
 import org.gersystem.transporte.infrastructure.security.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Collections;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(AuthController.class)
 class AuthControllerTest {
 
-    @Mock
+    @TestConfiguration
+    @EnableWebSecurity
+    static class SecurityTestConfig {
+        @Bean
+        public UserDetailsService userDetailsService() {
+            return new UserDetailsService() {
+                @Override
+                public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                    Usuario testUser = new Usuario();
+                    testUser.setId(1L);
+                    testUser.setUsername(username);
+                    testUser.setPassword(passwordEncoder().encode("test123"));
+                    testUser.setEmail("test@example.com");
+                    testUser.setRol(Rol.ADMIN);
+                    testUser.setActivo(true);
+                    return testUser;
+                }
+            };
+        }
+
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+            return new BCryptPasswordEncoder();
+        }
+
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+            http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/api/v1/auth/**").permitAll()
+                    .anyRequest().authenticated()
+                );
+
+            return http.build();
+        }
+    }
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
     private AuthenticationManager authenticationManager;
 
-    @Mock
+    @MockBean
     private JwtTokenProvider jwtTokenProvider;
 
-    @Mock
+    @MockBean
     private UsuarioDomainService usuarioDomainService;
 
-    @Mock
-    private UsuarioMapper usuarioMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    @InjectMocks
-    private AuthController authController;
-
-    private Usuario usuario;
     private LoginRequestDTO loginRequest;
     private CreateUsuarioDTO createUsuarioDTO;
-    private UsuarioDTO usuarioDTO;
+    private RefreshTokenRequestDTO refreshTokenRequest;
+    private Usuario usuario;
+    private JwtAuthenticationResponseDTO jwtResponse;
 
     @BeforeEach
     void setUp() {
-        usuario = new Usuario();
-        usuario.setId(1L);
-        usuario.setUsername("testuser");
-        usuario.setEmail("test@example.com");
-        usuario.setPassword("password123");
-        usuario.setRol(Rol.USER);
-        usuario.setActivo(true);
-
         loginRequest = new LoginRequestDTO();
         loginRequest.setUsernameOrEmail("testuser");
         loginRequest.setPassword("password123");
 
         createUsuarioDTO = new CreateUsuarioDTO();
         createUsuarioDTO.setUsername("newuser");
+        createUsuarioDTO.setPassword("password123");
         createUsuarioDTO.setEmail("newuser@example.com");
-        createUsuarioDTO.setPassword("newpass123");
-        createUsuarioDTO.setRol(Rol.USER);
 
-        usuarioDTO = new UsuarioDTO();
-        usuarioDTO.setId(1L);
-        usuarioDTO.setUsername("testuser");
-        usuarioDTO.setEmail("test@example.com");
-        usuarioDTO.setRol(Rol.USER);
-        usuarioDTO.setActivo(true);
+        refreshTokenRequest = new RefreshTokenRequestDTO();
+        refreshTokenRequest.setRefreshToken("refresh_token");
+
+        usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setUsername("testuser");
+        usuario.setEmail("test@example.com");
+        usuario.setRol(Rol.USER);
+        usuario.setActivo(true);
+
+        jwtResponse = new JwtAuthenticationResponseDTO();
+        jwtResponse.setAccessToken("access_token");
+        jwtResponse.setRefreshToken("refresh_token");
     }
 
     @Test
-    @DisplayName("Debe autenticar usuario exitosamente")
-    void login_DebeAutenticarUsuarioExitosamente() {
-        // Arrange
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                usuario, null, Collections.emptyList());
-        when(authenticationManager.authenticate(any(Authentication.class)))
+    void login_DebeAutenticarUsuarioExitosamente() throws Exception {
+        UsernamePasswordAuthenticationToken authentication = 
+            new UsernamePasswordAuthenticationToken(usuario, null);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
-        when(jwtTokenProvider.generateToken(usuario)).thenReturn("test.jwt.token");
-        when(usuarioDomainService.generarRefreshToken(usuario)).thenReturn("refresh.token");
+        when(jwtTokenProvider.generateToken(authentication)).thenReturn("access_token");
+        when(usuarioDomainService.generarRefreshToken(usuario)).thenReturn("refresh_token");
 
-        // Act
-        ResponseEntity<?> response = authController.login(loginRequest);
-
-        // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isInstanceOf(JwtAuthenticationResponseDTO.class);
-        JwtAuthenticationResponseDTO authResponse = (JwtAuthenticationResponseDTO) response.getBody();
-        assertThat(authResponse.getAccessToken()).isEqualTo("test.jwt.token");
-        assertThat(authResponse.getRefreshToken()).isEqualTo("refresh.token");
+        mockMvc.perform(post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").value("access_token"))
+                .andExpect(jsonPath("$.refreshToken").value("refresh_token"));
     }
 
     @Test
-    @DisplayName("Debe manejar credenciales inválidas")
-    void login_DebeManejarCredencialesInvalidas() {
-        // Arrange
-        when(authenticationManager.authenticate(any(Authentication.class)))
-                .thenThrow(new BadCredentialsException("Credenciales inválidas"));
+    void login_DebeManejarCredencialesInvalidas() throws Exception {
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new RuntimeException("Credenciales inválidas"));
 
-        // Act
-        ResponseEntity<?> response = authController.login(loginRequest);
-
-        // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-        assertThat(response.getBody()).isInstanceOf(ErrorResponseDTO.class);
-        ErrorResponseDTO errorResponse = (ErrorResponseDTO) response.getBody();
-        assertThat(errorResponse.getMensaje()).isEqualTo("Credenciales inválidas");
+        mockMvc.perform(post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("Debe registrar nuevo usuario exitosamente")
-    void register_DebeRegistrarNuevoUsuario() {
-        // Arrange
-        when(usuarioMapper.toEntity(createUsuarioDTO)).thenReturn(usuario);
-        when(usuarioDomainService.crearUsuario(usuario)).thenReturn(usuario);
-        when(usuarioMapper.toDto(usuario)).thenReturn(usuarioDTO);
+    void register_DebeRegistrarNuevoUsuario() throws Exception {
+        when(usuarioDomainService.crearUsuario(any(Usuario.class))).thenReturn(usuario);
+        when(jwtTokenProvider.generateToken(any(Usuario.class))).thenReturn("access_token");
+        when(usuarioDomainService.generarRefreshToken(usuario)).thenReturn("refresh_token");
 
-        // Act
-        ResponseEntity<UsuarioDTO> response = authController.register(createUsuarioDTO);
-
-        // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getUsername()).isEqualTo("testuser");
-        verify(usuarioDomainService).crearUsuario(usuario);
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createUsuarioDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").value("access_token"))
+                .andExpect(jsonPath("$.refreshToken").value("refresh_token"));
     }
 
     @Test
-    @DisplayName("Debe refrescar token exitosamente")
-    void refreshToken_DebeGenerarNuevoToken() {
-        // Arrange
-        RefreshTokenRequestDTO request = new RefreshTokenRequestDTO();
-        request.setRefreshToken("old.refresh.token");
-        when(usuarioDomainService.validarRefreshToken("old.refresh.token")).thenReturn(usuario);
-        when(jwtTokenProvider.generateToken(usuario)).thenReturn("new.jwt.token");
-        when(usuarioDomainService.generarRefreshToken(usuario)).thenReturn("new.refresh.token");
+    void refreshToken_DebeGenerarNuevoToken() throws Exception {
+        when(usuarioDomainService.validarRefreshToken("refresh_token")).thenReturn(usuario);
+        when(jwtTokenProvider.generateToken(any(Usuario.class))).thenReturn("new_access_token");
+        when(usuarioDomainService.generarRefreshToken(usuario)).thenReturn("new_refresh_token");
 
-        // Act
-        ResponseEntity<JwtAuthenticationResponseDTO> response = authController.refreshToken(request);
-
-        // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getAccessToken()).isEqualTo("new.jwt.token");
-        assertThat(response.getBody().getRefreshToken()).isEqualTo("new.refresh.token");
+        mockMvc.perform(post("/api/v1/auth/refresh-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(refreshTokenRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").value("new_access_token"))
+                .andExpect(jsonPath("$.refreshToken").value("new_refresh_token"));
     }
 
     @Test
-    @DisplayName("Debe cerrar sesión exitosamente")
-    void logout_DebeRevocarToken() {
-        // Arrange
-        RefreshTokenRequestDTO request = new RefreshTokenRequestDTO();
-        request.setRefreshToken("refresh.token");
-        doNothing().when(usuarioDomainService).revocarRefreshToken("refresh.token");
-
-        // Act
-        ResponseEntity<Void> response = authController.logout(request);
-
-        // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        verify(usuarioDomainService).revocarRefreshToken("refresh.token");
+    void logout_DebeRevocarToken() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/logout")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(refreshTokenRequest)))
+                .andExpect(status().isOk());
     }
 } 

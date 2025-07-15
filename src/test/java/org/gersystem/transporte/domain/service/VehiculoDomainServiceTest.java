@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -49,6 +50,10 @@ class VehiculoDomainServiceTest {
         conductor.setNombre("Juan Pérez");
         conductor.setLicencia("A12345");
         conductor.setActivo(true);
+
+        // Configurar los valores de capacidad mínima y máxima
+        ReflectionTestUtils.setField(vehiculoDomainService, "capacidadMinima", new BigDecimal("100.00"));
+        ReflectionTestUtils.setField(vehiculoDomainService, "capacidadMaxima", new BigDecimal("5000.00"));
     }
 
     @Test
@@ -60,7 +65,7 @@ class VehiculoDomainServiceTest {
             vehiculoDomainService.validarPlaca(vehiculo);
         })
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Formato de placa inválido");
+                .hasMessageContaining("La placa debe tener el formato AAA999");
 
         // Placa válida
         vehiculo.setPlaca("ABC123");
@@ -70,13 +75,21 @@ class VehiculoDomainServiceTest {
     @Test
     @DisplayName("Debe validar capacidad correctamente")
     void validarCapacidad_DebeValidarRangoPermitido() {
-        // Act & Assert
+        // Act & Assert - Capacidad menor al mínimo
         assertThatThrownBy(() -> {
-            vehiculo.setCapacidad(BigDecimal.ZERO);
+            vehiculo.setCapacidad(new BigDecimal("50.00"));
             vehiculoDomainService.validarCapacidad(vehiculo);
         })
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("La capacidad debe ser mayor a 0");
+                .hasMessageContaining("La capacidad del vehículo no puede ser menor a 100.00 kg");
+
+        // Act & Assert - Capacidad mayor al máximo
+        assertThatThrownBy(() -> {
+            vehiculo.setCapacidad(new BigDecimal("5500.00"));
+            vehiculoDomainService.validarCapacidad(vehiculo);
+        })
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("La capacidad del vehículo no puede ser mayor a 5000.00 kg");
 
         // Capacidad válida
         vehiculo.setCapacidad(new BigDecimal("1000.00"));

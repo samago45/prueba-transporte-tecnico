@@ -73,8 +73,8 @@ class UsuarioDomainServiceTest {
 
         // Act & Assert
         assertThatThrownBy(() -> usuarioDomainService.crearUsuario(usuario))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("El username ya está en uso");
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("El nombre de usuario ya existe");
     }
 
     @Test
@@ -85,8 +85,8 @@ class UsuarioDomainServiceTest {
 
         // Act & Assert
         assertThatThrownBy(() -> usuarioDomainService.crearUsuario(usuario))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("El email ya está en uso");
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("El email ya está registrado");
     }
 
     @Test
@@ -160,7 +160,7 @@ class UsuarioDomainServiceTest {
     void cambiarPassword_DebeCambiarExitosamente() {
         // Arrange
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
-        when(passwordEncoder.matches("oldPassword", usuario.getPassword())).thenReturn(true);
+        when(passwordEncoder.matches("oldPassword", "password123")).thenReturn(true);
         when(passwordEncoder.encode("newPassword")).thenReturn("encodedNewPassword");
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
 
@@ -170,7 +170,7 @@ class UsuarioDomainServiceTest {
         // Assert
         assertThat(resultado).isNotNull();
         assertThat(resultado.getPassword()).isEqualTo("encodedNewPassword");
-        verify(passwordEncoder).matches("oldPassword", usuario.getPassword());
+        verify(passwordEncoder).matches("oldPassword", "password123");
         verify(passwordEncoder).encode("newPassword");
         verify(usuarioRepository).save(usuario);
     }

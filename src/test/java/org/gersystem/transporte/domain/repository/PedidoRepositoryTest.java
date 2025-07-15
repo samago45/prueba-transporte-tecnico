@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Import(TestJpaConfig.class)
 @ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application-test.properties")
 class PedidoRepositoryTest {
 
     @Autowired
@@ -42,6 +44,7 @@ class PedidoRepositoryTest {
     void setUp() {
         conductor = new Conductor();
         conductor.setNombre("Juan Pérez");
+        conductor.setLicencia("L12345"); // Agregando licencia requerida
         conductor.setActivo(true);
         entityManager.persist(conductor);
 

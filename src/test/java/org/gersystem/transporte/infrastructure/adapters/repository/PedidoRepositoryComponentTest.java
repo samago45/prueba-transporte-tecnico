@@ -15,6 +15,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.gersystem.transporte.config.TestJpaConfig;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ActiveProfiles("test")
+@ContextConfiguration(classes = TestJpaConfig.class)
 class PedidoRepositoryComponentTest {
 
     @Autowired
@@ -41,9 +44,15 @@ class PedidoRepositoryComponentTest {
 
     @BeforeEach
     void setUp() {
+        // Limpiar datos anteriores
+        pedidoRepository.deleteAll();
+        vehiculoRepository.deleteAll();
+        conductorRepository.deleteAll();
+
         // Crear conductor
         conductor = new Conductor();
         conductor.setNombre("Juan Pérez");
+        conductor.setLicencia("ABC123456");
         conductor.setActivo(true);
         conductor = conductorRepository.save(conductor);
 
@@ -98,6 +107,7 @@ class PedidoRepositoryComponentTest {
         );
 
         // Assert
+        assertThat(pedidosPendientes).isNotNull();
         assertThat(pedidosPendientes.getContent()).hasSize(1);
         assertThat(pedidosPendientes.getContent().get(0).getEstado())
                 .isEqualTo(EstadoPedido.PENDIENTE);
@@ -119,6 +129,7 @@ class PedidoRepositoryComponentTest {
         BigDecimal pesoTotal = pedidoRepository.calcularPesoTotalTransportado();
 
         // Assert
+        assertThat(pesoTotal).isNotNull();
         assertThat(pesoTotal).isEqualByComparingTo(new BigDecimal("800.00"));
     }
 
@@ -132,6 +143,7 @@ class PedidoRepositoryComponentTest {
         );
 
         // Assert
+        assertThat(pedidosConductor).isNotNull();
         assertThat(pedidosConductor.getContent()).hasSize(2);
         assertThat(pedidosConductor.getContent())
                 .extracting(Pedido::getConductor)
