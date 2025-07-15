@@ -69,7 +69,7 @@ public class PedidoDomainService {
         BigDecimal capacidadDisponible = vehiculo.getCapacidad();
         List<Pedido> pedidosActivos = pedidoRepository.findByVehiculoAndEstadoIn(
                 vehiculo, 
-                List.of(EstadoPedido.PENDIENTE, EstadoPedido.EN_PROGRESO)
+                List.of(EstadoPedido.PENDIENTE, EstadoPedido.EN_PROCESO)
         );
 
         BigDecimal pesoTotal = pedidosActivos.stream()
@@ -88,11 +88,11 @@ public class PedidoDomainService {
     }
 
     private void validarTransicionEstado(EstadoPedido estadoActual, EstadoPedido nuevoEstado) {
-        if (estadoActual == EstadoPedido.COMPLETADO || estadoActual == EstadoPedido.CANCELADO) {
+        if (estadoActual == EstadoPedido.ENTREGADO || estadoActual == EstadoPedido.CANCELADO) {
             throw new IllegalStateException("No se puede cambiar el estado de un pedido completado o cancelado");
         }
 
-        if (estadoActual == EstadoPedido.PENDIENTE && nuevoEstado == EstadoPedido.COMPLETADO) {
+        if (estadoActual == EstadoPedido.PENDIENTE && nuevoEstado == EstadoPedido.ENTREGADO) {
             throw new IllegalStateException("Un pedido pendiente no puede pasar directamente a completado");
         }
     }

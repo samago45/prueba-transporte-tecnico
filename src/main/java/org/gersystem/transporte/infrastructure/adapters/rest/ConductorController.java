@@ -6,15 +6,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.gersystem.transporte.application.ConductorApplicationService;
-import org.gersystem.transporte.infrastructure.adapters.rest.dto.ConductorDTO;
-import org.gersystem.transporte.infrastructure.adapters.rest.dto.ConteoVehiculosDTO;
-import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreateConductorDTO;
-import org.gersystem.transporte.infrastructure.adapters.rest.dto.PageDTO;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.*;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,9 +38,28 @@ public class ConductorController {
                     content = @Content)
     })
     @PostMapping
-    public ResponseEntity<ConductorDTO> crearConductor(@RequestBody CreateConductorDTO createConductorDTO) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ConductorDTO> crearConductor(@Valid @RequestBody CreateConductorDTO createConductorDTO) {
         ConductorDTO nuevoConductor = conductorApplicationService.crearConductor(createConductorDTO);
         return new ResponseEntity<>(nuevoConductor, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Actualizar un conductor existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Conductor actualizado exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ConductorDTO.class)) }),
+            @ApiResponse(responseCode = "404", description = "Conductor no encontrado",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos",
+                    content = @Content)
+    })
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ConductorDTO> actualizarConductor(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateConductorDTO updateConductorDTO) {
+        return ResponseEntity.ok(conductorApplicationService.actualizarConductor(id, updateConductorDTO));
     }
 
     @Operation(summary = "Obtener un conductor por su ID")
@@ -53,6 +71,7 @@ public class ConductorController {
                     content = @Content)
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONDUCTOR')")
     public ResponseEntity<ConductorDTO> obtenerConductorPorId(@PathVariable Long id) {
         return ResponseEntity.ok(conductorApplicationService.obtenerConductorPorId(id));
     }
@@ -64,6 +83,7 @@ public class ConductorController {
                             schema = @Schema(implementation = PageDTO.class)) })
     })
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PageDTO<ConductorDTO>> obtenerTodosLosConductores(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) Boolean activo,
@@ -76,6 +96,7 @@ public class ConductorController {
             @ApiResponse(responseCode = "200", description = "Lista de conductores sin vehículos")
     })
     @GetMapping("/sin-vehiculos")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ConductorDTO>> obtenerConductoresSinVehiculos() {
         return ResponseEntity.ok(conductorApplicationService.obtenerConductoresSinVehiculos());
     }
@@ -85,18 +106,18 @@ public class ConductorController {
             @ApiResponse(responseCode = "200", description = "Conteo de vehículos por conductor")
     })
     @GetMapping("/conteo-vehiculos")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ConteoVehiculosDTO>> contarVehiculosPorConductor() {
         return ResponseEntity.ok(conductorApplicationService.contarVehiculosPorConductor());
     }
 
     @Operation(summary = "Eliminar un conductor (borrado lógico)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Conductor eliminado exitosamente",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Conductor no encontrado",
-                    content = @Content)
+            @ApiResponse(responseCode = "204", description = "Conductor eliminado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Conductor no encontrado")
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminarConductor(@PathVariable Long id) {
         conductorApplicationService.eliminarConductor(id);
         return ResponseEntity.noContent().build();

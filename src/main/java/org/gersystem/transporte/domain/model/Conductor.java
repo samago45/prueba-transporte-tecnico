@@ -1,27 +1,32 @@
 package org.gersystem.transporte.domain.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class Conductor extends Auditable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
+    @NotBlank(message = "El nombre es requerido")
     private String nombre;
-
-    private boolean activo = true;
-
-    @OneToMany(mappedBy = "conductor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Vehiculo> vehiculos = new ArrayList<>();
+    
+    @NotBlank(message = "La licencia es requerida")
+    private String licencia;
+    
+    private boolean activo;
+    
+    @OneToMany(mappedBy = "conductor")
+    private List<Vehiculo> vehiculos;
 } 

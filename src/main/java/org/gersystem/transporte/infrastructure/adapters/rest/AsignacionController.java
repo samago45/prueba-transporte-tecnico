@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.gersystem.transporte.application.AsignacionService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,17 +27,20 @@ public class AsignacionController {
             @ApiResponse(responseCode = "400", description = "Regla de negocio violada (ej. límite de vehículos)")
     })
     @PostMapping("/conductor/{conductorId}/vehiculo/{vehiculoId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> asignarVehiculo(@PathVariable Long conductorId, @PathVariable Long vehiculoId) {
         asignacionService.asignarVehiculo(conductorId, vehiculoId);
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Desasignar un vehículo")
+    @Operation(summary = "Desasignar un vehículo de su conductor actual")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Vehículo desasignado exitosamente"),
-            @ApiResponse(responseCode = "404", description = "Vehículo no encontrado")
+            @ApiResponse(responseCode = "404", description = "Vehículo no encontrado"),
+            @ApiResponse(responseCode = "400", description = "El vehículo no está asignado a ningún conductor")
     })
     @DeleteMapping("/vehiculo/{vehiculoId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> desasignarVehiculo(@PathVariable Long vehiculoId) {
         asignacionService.desasignarVehiculo(vehiculoId);
         return ResponseEntity.noContent().build();

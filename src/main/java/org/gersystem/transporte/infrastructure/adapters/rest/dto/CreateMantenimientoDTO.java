@@ -1,0 +1,22 @@
+package org.gersystem.transporte.infrastructure.adapters.rest.dto;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import org.gersystem.transporte.domain.model.TipoMantenimiento;
+
+import java.time.LocalDateTime;
+
+@Data
+public class CreateMantenimientoDTO {
+    
+    @NotNull(message = "El ID del vehículo es requerido")
+    private Long vehiculoId;
+    
+    @NotNull(message = "La fecha programada es requerida")
+    private LocalDateTime fechaProgramada;
+    
+    @NotNull(message = "El tipo de mantenimiento es requerido")
+    private TipoMantenimiento tipo;
+    
+    private String descripcion;
+} 

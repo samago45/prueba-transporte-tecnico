@@ -1,24 +1,111 @@
 package org.gersystem.transporte.domain.service;
 
+import lombok.RequiredArgsConstructor;
 import org.gersystem.transporte.domain.model.Conductor;
+import org.gersystem.transporte.domain.model.Vehiculo;
 import org.gersystem.transporte.domain.repository.ConductorRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalTime;
+import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ConductorDomainService {
-
-    private static final int MAX_VEHICULOS_POR_CONDUCTOR = 3;
 
     private final ConductorRepository conductorRepository;
 
-    public ConductorDomainService(ConductorRepository conductorRepository) {
-        this.conductorRepository = conductorRepository;
+    @Value("${conductor.max.vehiculos:3}")
+    private int maxVehiculosPorConductor;
+
+    @Value("${conductor.horario.inicio:06:00}")
+    private String horarioInicio;
+
+    @Value("${conductor.horario.fin:22:00}")
+    private String horarioFin;
+
+    @Transactional
+    public Conductor crearConductor(Conductor conductor) {
+        if (!conductor.isActivo()) {
+            conductor.setActivo(true);
+        }
+        return conductorRepository.save(conductor);
+    }
+
+    @Transactional
+    public Conductor actualizarConductor(Long id, Conductor conductorActualizado) {
+        return conductorRepository.findById(id)
+            .map(conductor -> {
+                conductor.setNombre(conductorActualizado.getNombre());
+                conductor.setLicencia(conductorActualizado.getLicencia());
+                return conductorRepository.save(conductor);
+            })
+            .orElseThrow(() -> new EntityNotFoundException("Conductor no encontrado"));
+    }
+
+    @Transactional
+    public Conductor activarConductor(Long id) {
+        return conductorRepository.findById(id)
+            .map(conductor -> {
+                conductor.setActivo(true);
+                return conductorRepository.save(conductor);
+            })
+            .orElseThrow(() -> new EntityNotFoundException("Conductor no encontrado"));
+    }
+
+    @Transactional
+    public Conductor desactivarConductor(Long id) {
+        return conductorRepository.findById(id)
+            .map(conductor -> {
+                conductor.setActivo(false);
+                return conductorRepository.save(conductor);
+            })
+            .orElseThrow(() -> new EntityNotFoundException("Conductor no encontrado"));
     }
 
     public void validarLimiteDeVehiculos(Conductor conductor) {
-        Integer conteo = conductorRepository.contarVehiculosAsignados(conductor.getId());
-        if (conteo >= MAX_VEHICULOS_POR_CONDUCTOR) {
-            throw new IllegalStateException("El conductor ya ha alcanzado el límite máximo de " + MAX_VEHICULOS_POR_CONDUCTOR + " vehículos asignados.");
+        List<Vehiculo> vehiculosActivos = conductor.getVehiculos().stream()
+                .filter(Vehiculo::isActivo)
+                .toList();
+
+        if (vehiculosActivos.size() >= maxVehiculosPorConductor) {
+            throw new IllegalStateException(
+                    String.format("El conductor ya tiene el máximo de %d vehículos permitidos", maxVehiculosPorConductor)
+            );
         }
+    }
+
+    public void validarHorarioServicio() {
+        LocalTime horaActual = LocalTime.now();
+        LocalTime inicio = LocalTime.parse(horarioInicio);
+        LocalTime fin = LocalTime.parse(horarioFin);
+
+        if (horaActual.isBefore(inicio) || horaActual.isAfter(fin)) {
+            throw new IllegalStateException(
+                    String.format("Fuera de horario de servicio. Horario permitido: %s - %s", horarioInicio, horarioFin)
+            );
+        }
+    }
+
+    public void validarZonaCobertura(String zonaActual, List<String> zonasPermitidas) {
+        if (!zonasPermitidas.contains(zonaActual)) {
+            throw new IllegalStateException(
+                    String.format("La zona %s está fuera del área de cobertura permitida", zonaActual)
+            );
+        }
+    }
+
+    public void validarDisponibilidadConductor(Conductor conductor) {
+        if (!conductor.isActivo()) {
+            throw new IllegalStateException("El conductor no está activo");
+        }
+
+        // Aquí podrían agregarse más validaciones como:
+        // - Verificar si el conductor tiene licencia vigente
+        // - Verificar si el conductor ha cumplido el máximo de horas permitidas
+        // - Verificar si el conductor tiene todas sus documentaciones al día
     }
 } 

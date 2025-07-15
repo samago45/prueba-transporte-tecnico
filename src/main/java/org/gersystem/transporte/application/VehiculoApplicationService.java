@@ -4,9 +4,7 @@ import org.gersystem.transporte.domain.model.Vehiculo;
 import org.gersystem.transporte.domain.repository.VehiculoRepository;
 import org.gersystem.transporte.domain.service.VehiculoDomainService;
 import org.gersystem.transporte.infrastructure.adapters.repository.VehiculoSpecification;
-import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreateVehiculoDTO;
-import org.gersystem.transporte.infrastructure.adapters.rest.dto.PageDTO;
-import org.gersystem.transporte.infrastructure.adapters.rest.dto.VehiculoDTO;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.*;
 import org.gersystem.transporte.infrastructure.adapters.rest.mapper.VehiculoMapper;
 import org.gersystem.transporte.infrastructure.adapters.rest.exception.ResourceNotFoundException;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,9 +26,9 @@ public class VehiculoApplicationService {
     private final VehiculoSpecification vehiculoSpecification;
 
     public VehiculoApplicationService(VehiculoRepository vehiculoRepository,
-                                      VehiculoDomainService vehiculoDomainService,
-                                      VehiculoMapper vehiculoMapper,
-                                      VehiculoSpecification vehiculoSpecification) {
+                                    VehiculoDomainService vehiculoDomainService,
+                                    VehiculoMapper vehiculoMapper,
+                                    VehiculoSpecification vehiculoSpecification) {
         this.vehiculoRepository = vehiculoRepository;
         this.vehiculoDomainService = vehiculoDomainService;
         this.vehiculoMapper = vehiculoMapper;
@@ -41,9 +39,24 @@ public class VehiculoApplicationService {
     public VehiculoDTO crearVehiculo(CreateVehiculoDTO createVehiculoDTO) {
         Vehiculo vehiculo = vehiculoMapper.toEntity(createVehiculoDTO);
         vehiculoDomainService.validarPlaca(vehiculo);
-        // Aquí podríamos añadir más validaciones de negocio
+        vehiculoDomainService.validarCapacidad(vehiculo);
         Vehiculo nuevoVehiculo = vehiculoRepository.save(vehiculo);
         return vehiculoMapper.toDto(nuevoVehiculo);
+    }
+
+    @Transactional
+    public VehiculoDTO actualizarVehiculo(Long id, UpdateVehiculoDTO updateVehiculoDTO) {
+        Vehiculo vehiculo = vehiculoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Vehículo no encontrado con id: " + id));
+
+        vehiculo.setPlaca(updateVehiculoDTO.getPlaca());
+        vehiculo.setCapacidad(updateVehiculoDTO.getCapacidad());
+        vehiculo.setActivo(updateVehiculoDTO.isActivo());
+
+        vehiculoDomainService.validarPlaca(vehiculo);
+        vehiculoDomainService.validarCapacidad(vehiculo);
+
+        return vehiculoMapper.toDto(vehiculoRepository.save(vehiculo));
     }
 
     @Transactional(readOnly = true)
@@ -63,12 +76,6 @@ public class VehiculoApplicationService {
     @Cacheable("vehiculosLibres")
     @Transactional(readOnly = true)
     public List<VehiculoDTO> obtenerVehiculosLibres() {
-        // Simulación de una operación costosa
-        try {
-            Thread.sleep(2000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         return vehiculoRepository.findVehiculosLibres().stream()
                 .map(vehiculoMapper::toDto)
                 .collect(Collectors.toList());

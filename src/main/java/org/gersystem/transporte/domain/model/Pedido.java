@@ -6,7 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.gersystem.transporte.domain.model.Auditable;
+import org.gersystem.transporte.domain.model.Conductor;
+import org.gersystem.transporte.domain.model.Vehiculo;
 
 import java.math.BigDecimal;
 
@@ -14,6 +18,7 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class Pedido extends Auditable {
 
     @Id

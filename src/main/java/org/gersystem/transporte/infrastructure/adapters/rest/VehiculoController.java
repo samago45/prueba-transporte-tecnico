@@ -6,11 +6,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.gersystem.transporte.application.VehiculoApplicationService;
-import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreateVehiculoDTO;
-import org.gersystem.transporte.infrastructure.adapters.rest.dto.PageDTO;
-import org.gersystem.transporte.infrastructure.adapters.rest.dto.VehiculoDTO;
-
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.*;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -41,9 +39,27 @@ public class VehiculoController {
     })
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<VehiculoDTO> crearVehiculo(@RequestBody CreateVehiculoDTO createVehiculoDTO) {
+    public ResponseEntity<VehiculoDTO> crearVehiculo(@Valid @RequestBody CreateVehiculoDTO createVehiculoDTO) {
         VehiculoDTO nuevoVehiculo = vehiculoApplicationService.crearVehiculo(createVehiculoDTO);
         return new ResponseEntity<>(nuevoVehiculo, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Actualizar un vehículo existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vehículo actualizado exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = VehiculoDTO.class)) }),
+            @ApiResponse(responseCode = "404", description = "Vehículo no encontrado",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos",
+                    content = @Content)
+    })
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<VehiculoDTO> actualizarVehiculo(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateVehiculoDTO updateVehiculoDTO) {
+        return ResponseEntity.ok(vehiculoApplicationService.actualizarVehiculo(id, updateVehiculoDTO));
     }
 
     @Operation(summary = "Obtener un vehículo por su ID")
@@ -58,10 +74,7 @@ public class VehiculoController {
     @PreAuthorize("hasAnyRole('ADMIN', 'CONDUCTOR', 'CLIENTE')")
     public ResponseEntity<VehiculoDTO> obtenerVehiculoPorId(@PathVariable Long id) {
         VehiculoDTO vehiculoDTO = vehiculoApplicationService.obtenerVehiculoPorId(id);
-        if (vehiculoDTO != null) {
-            return ResponseEntity.ok(vehiculoDTO);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(vehiculoDTO);
     }
 
     @Operation(summary = "Obtener todos los vehículos con paginación y filtros")
@@ -92,10 +105,8 @@ public class VehiculoController {
 
     @Operation(summary = "Eliminar un vehículo (borrado lógico)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Vehículo eliminado exitosamente",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Vehículo no encontrado",
-                    content = @Content)
+            @ApiResponse(responseCode = "204", description = "Vehículo eliminado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Vehículo no encontrado")
     })
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

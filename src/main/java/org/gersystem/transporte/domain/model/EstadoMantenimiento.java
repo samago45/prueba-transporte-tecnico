@@ -1,8 +1,8 @@
 package org.gersystem.transporte.domain.model;
 
-public enum EstadoPedido {
+public enum EstadoMantenimiento {
     PENDIENTE,
     EN_PROCESO,
-    ENTREGADO,
+    COMPLETADO,
     CANCELADO
 } 
