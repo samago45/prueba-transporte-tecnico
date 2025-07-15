@@ -3,6 +3,7 @@ package org.gersystem.transporte.infrastructure.adapters.rest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.gersystem.transporte.application.PedidoApplicationService;
 import org.gersystem.transporte.domain.model.EstadoPedido;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreatePedidoDTO;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/pedidos")
+@Tag(name = "Pedidos", description = "Operaciones sobre pedidos de transporte")
 public class PedidoController {
 
     private final PedidoApplicationService pedidoApplicationService;

@@ -5,6 +5,7 @@ import org.gersystem.transporte.infrastructure.adapters.rest.dto.ConteoVehiculos
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,4 +17,7 @@ public interface ConductorRepository extends JpaRepository<Conductor, Long>, Jpa
 
     @Query("SELECT new org.gersystem.transporte.infrastructure.adapters.rest.dto.ConteoVehiculosDTO(c.id, c.nombre, size(c.vehiculos)) FROM Conductor c WHERE c.activo = true")
     List<ConteoVehiculosDTO> countVehiculosByConductor();
+
+    @Query("SELECT COUNT(v.id) FROM Conductor c JOIN c.vehiculos v WHERE c.id = :conductorId")
+    Integer contarVehiculosAsignados(@Param("conductorId") Long conductorId);
 } 

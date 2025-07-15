@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.gersystem.transporte.application.ConductorApplicationService;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.ConductorDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.ConteoVehiculosDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreateConductorDTO;
-import org.springframework.data.domain.Page;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.PageDTO;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/conductores")
+@Tag(name = "Conductores", description = "Operaciones sobre conductores")
 public class ConductorController {
 
     private final ConductorApplicationService conductorApplicationService;
@@ -58,13 +61,13 @@ public class ConductorController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista paginada de conductores",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Page.class)) })
+                            schema = @Schema(implementation = PageDTO.class)) })
     })
     @GetMapping
-    public ResponseEntity<Page<ConductorDTO>> obtenerTodosLosConductores(
+    public ResponseEntity<PageDTO<ConductorDTO>> obtenerTodosLosConductores(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) Boolean activo,
-            Pageable pageable) {
+            @ParameterObject Pageable pageable) {
         return ResponseEntity.ok(conductorApplicationService.obtenerTodosLosConductores(nombre, activo, pageable));
     }
 

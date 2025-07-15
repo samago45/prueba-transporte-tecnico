@@ -4,7 +4,7 @@ import org.gersystem.transporte.domain.model.Conductor;
 import org.gersystem.transporte.domain.model.Vehiculo;
 import org.gersystem.transporte.domain.repository.ConductorRepository;
 import org.gersystem.transporte.domain.repository.VehiculoRepository;
-import org.gersystem.transporte.domain.service.ConductorService;
+import org.gersystem.transporte.domain.service.ConductorDomainService;
 import org.gersystem.transporte.infrastructure.adapters.rest.exception.ResourceNotFoundException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -15,11 +15,11 @@ public class AsignacionService {
 
     private final VehiculoRepository vehiculoRepository;
     private final ConductorRepository conductorRepository;
-    private final ConductorService conductorDomainService;
+    private final ConductorDomainService conductorDomainService;
 
     public AsignacionService(VehiculoRepository vehiculoRepository,
                              ConductorRepository conductorRepository,
-                             ConductorService conductorDomainService) {
+                             ConductorDomainService conductorDomainService) {
         this.vehiculoRepository = vehiculoRepository;
         this.conductorRepository = conductorRepository;
         this.conductorDomainService = conductorDomainService;

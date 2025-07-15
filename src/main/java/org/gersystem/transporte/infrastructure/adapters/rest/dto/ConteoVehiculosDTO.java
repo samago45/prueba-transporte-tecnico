@@ -8,5 +8,5 @@ import lombok.Data;
 public class ConteoVehiculosDTO {
     private Long conductorId;
     private String nombreConductor;
-    private Long cantidadVehiculos;
+    private Integer cantidadVehiculos;
 } 

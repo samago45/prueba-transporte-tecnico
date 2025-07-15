@@ -5,10 +5,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.gersystem.transporte.application.VehiculoApplicationService;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreateVehiculoDTO;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.PageDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.VehiculoDTO;
-import org.springframework.data.domain.Page;
+
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/vehiculos")
+@Tag(name = "Vehículos", description = "Operaciones sobre vehículos")
 public class VehiculoController {
 
     private final VehiculoApplicationService vehiculoApplicationService;
@@ -64,15 +68,15 @@ public class VehiculoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista paginada de vehículos",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Page.class)) })
+                            schema = @Schema(implementation = PageDTO.class)) })
     })
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'CONDUCTOR', 'CLIENTE')")
-    public ResponseEntity<Page<VehiculoDTO>> obtenerTodosLosVehiculos(
+    public ResponseEntity<PageDTO<VehiculoDTO>> obtenerTodosLosVehiculos(
             @RequestParam(required = false) String placa,
             @RequestParam(required = false) Boolean activo,
-            Pageable pageable) {
-        Page<VehiculoDTO> vehiculos = vehiculoApplicationService.obtenerTodosLosVehiculos(placa, activo, pageable);
+            @ParameterObject Pageable pageable) {
+        PageDTO<VehiculoDTO> vehiculos = vehiculoApplicationService.obtenerTodosLosVehiculos(placa, activo, pageable);
         return ResponseEntity.ok(vehiculos);
     }
 

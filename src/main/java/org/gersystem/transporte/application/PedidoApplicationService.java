@@ -7,7 +7,7 @@ import org.gersystem.transporte.domain.model.Vehiculo;
 import org.gersystem.transporte.domain.repository.ConductorRepository;
 import org.gersystem.transporte.domain.repository.PedidoRepository;
 import org.gersystem.transporte.domain.repository.VehiculoRepository;
-import org.gersystem.transporte.domain.service.PedidoService;
+import org.gersystem.transporte.domain.service.PedidoDomainService;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreatePedidoDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.PedidoDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.exception.ResourceNotFoundException;
@@ -21,13 +21,13 @@ public class PedidoApplicationService {
     private final PedidoRepository pedidoRepository;
     private final VehiculoRepository vehiculoRepository;
     private final ConductorRepository conductorRepository;
-    private final PedidoService pedidoDomainService;
+    private final PedidoDomainService pedidoDomainService;
     private final PedidoMapper pedidoMapper;
 
     public PedidoApplicationService(PedidoRepository pedidoRepository,
                                     VehiculoRepository vehiculoRepository,
                                     ConductorRepository conductorRepository,
-                                    PedidoService pedidoDomainService,
+                                    PedidoDomainService pedidoDomainService,
                                     PedidoMapper pedidoMapper) {
         this.pedidoRepository = pedidoRepository;
         this.vehiculoRepository = vehiculoRepository;

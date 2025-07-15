@@ -3,12 +3,14 @@ package org.gersystem.transporte.infrastructure.adapters.rest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.gersystem.transporte.application.AsignacionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/asignaciones")
+@Tag(name = "Asignaciones", description = "Operaciones para asignar y desasignar vehículos a conductores")
 public class AsignacionController {
 
     private final AsignacionService asignacionService;

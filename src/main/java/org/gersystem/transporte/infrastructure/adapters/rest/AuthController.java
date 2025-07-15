@@ -1,6 +1,11 @@
 package org.gersystem.transporte.infrastructure.adapters.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.JwtAuthenticationResponseDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.LoginRequestDTO;
 import org.gersystem.transporte.infrastructure.security.JwtTokenProvider;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Autenticación", description = "API para autenticación y gestión de tokens")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -27,8 +33,13 @@ public class AuthController {
     }
 
     @Operation(summary = "Autenticar usuario y obtener token JWT")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Autenticación exitosa",
+                    content = @Content(schema = @Schema(implementation = JwtAuthenticationResponseDTO.class))),
+            @ApiResponse(responseCode = "401", description = "Credenciales inválidas", content = @Content)
+    })
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestDTO loginRequest) {
+    public ResponseEntity<JwtAuthenticationResponseDTO> authenticateUser(@RequestBody LoginRequestDTO loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),

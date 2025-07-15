@@ -2,11 +2,13 @@ package org.gersystem.transporte.application;
 
 import org.gersystem.transporte.domain.model.Vehiculo;
 import org.gersystem.transporte.domain.repository.VehiculoRepository;
-import org.gersystem.transporte.domain.service.VehiculoService;
+import org.gersystem.transporte.domain.service.VehiculoDomainService;
 import org.gersystem.transporte.infrastructure.adapters.repository.VehiculoSpecification;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreateVehiculoDTO;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.PageDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.VehiculoDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.mapper.VehiculoMapper;
+import org.gersystem.transporte.infrastructure.adapters.rest.exception.ResourceNotFoundException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,12 +23,12 @@ import java.util.stream.Collectors;
 public class VehiculoApplicationService {
 
     private final VehiculoRepository vehiculoRepository;
-    private final VehiculoService vehiculoDomainService;
+    private final VehiculoDomainService vehiculoDomainService;
     private final VehiculoMapper vehiculoMapper;
     private final VehiculoSpecification vehiculoSpecification;
 
     public VehiculoApplicationService(VehiculoRepository vehiculoRepository,
-                                      VehiculoService vehiculoDomainService,
+                                      VehiculoDomainService vehiculoDomainService,
                                       VehiculoMapper vehiculoMapper,
                                       VehiculoSpecification vehiculoSpecification) {
         this.vehiculoRepository = vehiculoRepository;
@@ -48,16 +50,14 @@ public class VehiculoApplicationService {
     public VehiculoDTO obtenerVehiculoPorId(Long id) {
         return vehiculoRepository.findById(id)
                 .map(vehiculoMapper::toDto)
-                .orElse(null); // o lanzar excepción
+                .orElseThrow(() -> new ResourceNotFoundException("Vehículo no encontrado con id: " + id));
     }
 
-    @Transactional(readOnly = true)
-    public Page<VehiculoDTO> obtenerTodosLosVehiculos(String placa, Boolean activo, Pageable pageable) {
+    public PageDTO<VehiculoDTO> obtenerTodosLosVehiculos(String placa, Boolean activo, Pageable pageable) {
         Specification<Vehiculo> spec = Specification.where(vehiculoSpecification.placaContains(placa))
-                                                    .and(vehiculoSpecification.esActivo(activo));
-
-        return vehiculoRepository.findAll(spec, pageable)
-                                 .map(vehiculoMapper::toDto);
+                .and(vehiculoSpecification.esActivo(activo));
+        Page<VehiculoDTO> dtoPage = vehiculoRepository.findAll(spec, pageable).map(vehiculoMapper::toDto);
+        return new PageDTO<>(dtoPage);
     }
     
     @Cacheable("vehiculosLibres")

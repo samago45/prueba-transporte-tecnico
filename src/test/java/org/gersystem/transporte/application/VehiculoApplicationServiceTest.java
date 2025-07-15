@@ -2,11 +2,11 @@ package org.gersystem.transporte.application;
 
 import org.gersystem.transporte.domain.model.Vehiculo;
 import org.gersystem.transporte.domain.repository.VehiculoRepository;
-import org.gersystem.transporte.domain.service.VehiculoService;
+import org.gersystem.transporte.domain.service.VehiculoDomainService;
+import org.gersystem.transporte.infrastructure.adapters.repository.VehiculoSpecification;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreateVehiculoDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.VehiculoDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.mapper.VehiculoMapper;
-import org.gersystem.transporte.infrastructure.adapters.repository.VehiculoSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +27,7 @@ class VehiculoApplicationServiceTest {
     private VehiculoRepository vehiculoRepository;
 
     @Mock
-    private VehiculoService vehiculoDomainService;
+    private VehiculoDomainService vehiculoDomainService;
 
     @Mock
     private VehiculoMapper vehiculoMapper;

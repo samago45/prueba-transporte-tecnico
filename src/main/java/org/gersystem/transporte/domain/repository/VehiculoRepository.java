@@ -10,6 +10,8 @@ import java.util.List;
 
 @Repository
 public interface VehiculoRepository extends JpaRepository<Vehiculo, Long>, JpaSpecificationExecutor<Vehiculo> {
-    @Query("SELECT v FROM Vehiculo v WHERE v.activo = true AND v.conductor IS NULL")
+    @Query("SELECT v FROM Vehiculo v WHERE v.conductor IS NULL AND v.activo = true")
     List<Vehiculo> findVehiculosLibres();
-} 
+
+    boolean existsByPlaca(String placa);
+}
