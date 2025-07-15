@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.gersystem.transporte.application.exception.BusinessException;
 import org.gersystem.transporte.domain.model.EstadoMantenimiento;
 import org.gersystem.transporte.domain.model.Mantenimiento;
 import org.gersystem.transporte.domain.service.MantenimientoDomainService;
@@ -41,6 +42,7 @@ public class MantenimientoController {
         description = """
             Programa un nuevo mantenimiento para un vehículo. Solo administradores pueden programar mantenimientos.
             El tipo de mantenimiento puede ser PREVENTIVO o CORRECTIVO.
+            La fecha puede enviarse en formato 'YYYY-MM-DD' o 'YYYY-MM-DDTHH:mm:ss'.
             """
     )
     @ApiResponses({
@@ -86,10 +88,14 @@ public class MantenimientoController {
             @Valid @RequestBody CreateMantenimientoDTO createMantenimientoDTO) {
         try {
             Mantenimiento mantenimiento = mantenimientoMapper.toEntity(createMantenimientoDTO);
-            Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(mantenimiento);
+            Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(
+                mantenimiento, 
+                createMantenimientoDTO.getVehiculoId(),
+                createMantenimientoDTO.getFechaProgramada()
+            );
             return ResponseEntity.ok(mantenimientoMapper.toDto(mantenimientoCreado));
-        } catch (IllegalArgumentException e) {
-            throw new ValidationException("Error en los datos del mantenimiento: " + e.getMessage());
+        } catch (BusinessException e) {
+            throw new ValidationException(e.getMessage());
         }
     }
 
@@ -145,8 +151,8 @@ public class MantenimientoController {
         try {
             Mantenimiento mantenimientoActualizado = mantenimientoDomainService.actualizarEstadoMantenimiento(id, nuevoEstado);
             return ResponseEntity.ok(mantenimientoMapper.toDto(mantenimientoActualizado));
-        } catch (IllegalArgumentException e) {
-            throw new ValidationException("Estado inválido: " + e.getMessage());
+        } catch (BusinessException e) {
+            throw new ValidationException(e.getMessage());
         }
     }
 
@@ -177,8 +183,12 @@ public class MantenimientoController {
     public ResponseEntity<MantenimientoDTO> obtenerMantenimiento(
             @Parameter(description = "ID del mantenimiento", required = true, example = "1")
             @PathVariable Long id) {
-        Mantenimiento mantenimiento = mantenimientoDomainService.obtenerMantenimiento(id);
-        return ResponseEntity.ok(mantenimientoMapper.toDto(mantenimiento));
+        try {
+            Mantenimiento mantenimiento = mantenimientoDomainService.obtenerMantenimiento(id);
+            return ResponseEntity.ok(mantenimientoMapper.toDto(mantenimiento));
+        } catch (BusinessException e) {
+            throw new ValidationException(e.getMessage());
+        }
     }
 
     @GetMapping
@@ -247,6 +257,8 @@ public class MantenimientoController {
                 "Error en parámetros de ordenamiento - La propiedad '" + e.getPropertyName() + 
                 "' no es válida. Use: id, fechaProgramada, fechaRealizada, tipo, estado"
             );
+        } catch (BusinessException e) {
+            throw new ValidationException(e.getMessage());
         }
     }
 } 
