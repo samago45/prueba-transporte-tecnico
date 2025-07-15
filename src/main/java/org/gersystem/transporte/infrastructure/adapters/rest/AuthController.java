@@ -10,12 +10,17 @@ import org.gersystem.transporte.infrastructure.adapters.rest.mapper.UsuarioMappe
 import org.gersystem.transporte.infrastructure.security.JwtTokenProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -38,17 +43,46 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Iniciar sesión", description = "Autentica un usuario y devuelve tokens JWT")
-    public ResponseEntity<JwtAuthenticationResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-        );
+    @Operation(
+        summary = "Iniciar sesión",
+        description = "Autentica un usuario usando username/email y contraseña, devuelve tokens JWT",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Autenticación exitosa",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = JwtAuthenticationResponseDTO.class)
+                )
+            ),
+            @ApiResponse(
+                responseCode = "401",
+                description = "Credenciales inválidas",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                )
+            )
+        }
+    )
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(), loginRequest.getPassword())
+            );
 
-        Usuario usuario = (Usuario) authentication.getPrincipal();
-        String accessToken = jwtTokenProvider.generateToken(usuario);
-        String refreshToken = usuarioDomainService.generarRefreshToken(usuario);
+            Usuario usuario = (Usuario) authentication.getPrincipal();
+            String accessToken = jwtTokenProvider.generateToken(usuario);
+            String refreshToken = usuarioDomainService.generarRefreshToken(usuario);
 
-        return ResponseEntity.ok(new JwtAuthenticationResponseDTO(accessToken, refreshToken));
+            return ResponseEntity.ok(new JwtAuthenticationResponseDTO(accessToken, refreshToken));
+        } catch (BadCredentialsException e) {
+            ErrorResponseDTO errorResponse = new ErrorResponseDTO("Credenciales inválidas", "Las credenciales proporcionadas son incorrectas");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        } catch (Exception e) {
+            ErrorResponseDTO errorResponse = new ErrorResponseDTO("Error de autenticación", "Ha ocurrido un error durante la autenticación");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
     }
 
     @PostMapping("/register")

@@ -62,11 +62,17 @@ public class VehiculoApplicationService {
     @Transactional(readOnly = true)
     public VehiculoDTO obtenerVehiculoPorId(Long id) {
         return vehiculoRepository.findById(id)
+                .filter(Vehiculo::isActivo)
                 .map(vehiculoMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Vehículo no encontrado con id: " + id));
     }
 
     public PageDTO<VehiculoDTO> obtenerTodosLosVehiculos(String placa, Boolean activo, Pageable pageable) {
+        // Si no se especifica el estado activo, por defecto mostrar solo los activos
+        if (activo == null) {
+            activo = true;
+        }
+        
         Specification<Vehiculo> spec = Specification.where(vehiculoSpecification.placaContains(placa))
                                                     .and(vehiculoSpecification.esActivo(activo));
         Page<VehiculoDTO> dtoPage = vehiculoRepository.findAll(spec, pageable).map(vehiculoMapper::toDto);
@@ -83,9 +89,9 @@ public class VehiculoApplicationService {
 
     @Transactional
     public void eliminarVehiculo(Long id) {
-        vehiculoRepository.findById(id).ifPresent(vehiculo -> {
-            vehiculo.setActivo(false);
-            vehiculoRepository.save(vehiculo);
-        });
+        Vehiculo vehiculo = vehiculoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Vehículo no encontrado con id: " + id));
+        vehiculo.setActivo(false);
+        vehiculoRepository.save(vehiculo);
     }
 } 

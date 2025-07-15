@@ -29,16 +29,30 @@ public class VehiculoController {
         this.vehiculoApplicationService = vehiculoApplicationService;
     }
 
-    @Operation(summary = "Crear un nuevo vehículo")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Vehículo creado exitosamente",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = VehiculoDTO.class)) }),
-            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos",
-                    content = @Content)
-    })
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+        summary = "Crear un nuevo vehículo",
+        description = "Crea un nuevo vehículo con la placa (formato AAA999) y capacidad especificadas"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201",
+            description = "Vehículo creado exitosamente",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = VehiculoDTO.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos inválidos - La placa debe tener formato AAA999 y la capacidad debe ser positiva",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponseDTO.class)
+            )
+        )
+    })
     public ResponseEntity<VehiculoDTO> crearVehiculo(@Valid @RequestBody CreateVehiculoDTO createVehiculoDTO) {
         VehiculoDTO nuevoVehiculo = vehiculoApplicationService.crearVehiculo(createVehiculoDTO);
         return new ResponseEntity<>(nuevoVehiculo, HttpStatus.CREATED);

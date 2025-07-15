@@ -29,16 +29,47 @@ public class ConductorController {
         this.conductorApplicationService = conductorApplicationService;
     }
 
-    @Operation(summary = "Crear un nuevo conductor")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Conductor creado exitosamente",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ConductorDTO.class)) }),
-            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos",
-                    content = @Content)
-    })
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+        summary = "Crear un nuevo conductor",
+        description = "Crea un nuevo conductor con la información proporcionada. " +
+                "La licencia debe seguir el formato de una letra mayúscula seguida de 5 dígitos (ejemplo: A12345)."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201",
+            description = "Conductor creado exitosamente",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ConductorDTO.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos inválidos - La licencia debe tener el formato correcto (A12345)",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponseDTO.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "No autorizado - Se requiere autenticación",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponseDTO.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Prohibido - Se requiere rol de ADMIN",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponseDTO.class)
+            )
+        )
+    })
     public ResponseEntity<ConductorDTO> crearConductor(@Valid @RequestBody CreateConductorDTO createConductorDTO) {
         ConductorDTO nuevoConductor = conductorApplicationService.crearConductor(createConductorDTO);
         return new ResponseEntity<>(nuevoConductor, HttpStatus.CREATED);

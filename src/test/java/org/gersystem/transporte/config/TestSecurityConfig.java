@@ -17,7 +17,7 @@ public class TestSecurityConfig {
 
     @Bean
     public JwtTokenProvider jwtTokenProvider() {
-        return new JwtTokenProvider("test-secret-key-for-jwt-hs512-algorithm-with-minimum-length", 3600L);
+        return new JwtTokenProvider(3600L);
     }
 
     @Bean

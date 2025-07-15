@@ -19,7 +19,7 @@ public class Vehiculo extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Pattern(regexp = "^[A-Z]{3}-\\d{3}$", message = "La placa debe tener el formato ABC-123")
+    @Pattern(regexp = "^[A-Z]{3}\\d{3}$", message = "La placa debe tener el formato AAA999")
     private String placa;
 
     @Positive(message = "La capacidad debe ser mayor a 0")

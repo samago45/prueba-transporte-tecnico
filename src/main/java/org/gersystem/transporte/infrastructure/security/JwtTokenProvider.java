@@ -19,9 +19,9 @@ public class JwtTokenProvider {
     private final long tokenValidityInMilliseconds;
 
     public JwtTokenProvider(
-            @Value("${jwt.secret:defaultSecretKeyForDevelopmentEnvironmentOnly}") String secret,
             @Value("${jwt.token-validity-in-seconds:86400}") long tokenValidityInSeconds) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        // Generamos una clave segura para HS512
+        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
         this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
     }
 

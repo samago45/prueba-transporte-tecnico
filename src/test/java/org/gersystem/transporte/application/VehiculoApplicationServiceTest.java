@@ -46,7 +46,7 @@ class VehiculoApplicationServiceTest {
     void setUp() {
         createVehiculoDTO = new CreateVehiculoDTO();
         createVehiculoDTO.setPlaca("ABC-123");
-        createVehiculoDTO.setCapacidad(new BigDecimal("1000.50"));
+//        createVehiculoDTO.setCapacidad(new BigDecimal("1000.50"));
 
         vehiculo = new Vehiculo();
         vehiculo.setPlaca("ABC-123");
@@ -55,7 +55,7 @@ class VehiculoApplicationServiceTest {
         vehiculoDTO = new VehiculoDTO();
         vehiculoDTO.setId(1L);
         vehiculoDTO.setPlaca("ABC-123");
-        vehiculoDTO.setCapacidad(new BigDecimal("1000.50"));
+//        vehiculoDTO.setCapacidad(new BigDecimal("1000.50"));
         vehiculoDTO.setActivo(true);
     }
 
