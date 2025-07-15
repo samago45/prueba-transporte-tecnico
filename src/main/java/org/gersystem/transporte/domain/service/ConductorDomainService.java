@@ -92,6 +92,12 @@ public class ConductorDomainService {
             throw new IllegalStateException("El vehículo no está activo");
         }
 
+        if (vehiculo.getConductor() != null) {
+            throw new IllegalStateException("El vehículo ya está asignado a otro conductor");
+        }
+
+        validarLimiteDeVehiculos(conductor);
+
         if (conductor.getVehiculos() == null) {
             conductor.setVehiculos(new ArrayList<>());
         }
@@ -106,13 +112,17 @@ public class ConductorDomainService {
     }
 
     public void validarLimiteDeVehiculos(Conductor conductor) {
+        if (conductor.getVehiculos() == null) {
+            conductor.setVehiculos(new ArrayList<>());
+        }
+
         List<Vehiculo> vehiculosActivos = conductor.getVehiculos().stream()
                 .filter(Vehiculo::isActivo)
                 .toList();
 
         if (vehiculosActivos.size() >= maxVehiculosPorConductor) {
             throw new IllegalStateException(
-                    String.format("El conductor ya tiene el máximo de %d vehículos permitidos", maxVehiculosPorConductor)
+                "El conductor ya tiene el máximo de vehículos permitidos"
             );
         }
     }
@@ -142,9 +152,5 @@ public class ConductorDomainService {
             throw new IllegalStateException("El conductor no está activo");
         }
 
-        // Aquí podrían agregarse más validaciones como:
-        // - Verificar si el conductor tiene licencia vigente
-        // - Verificar si el conductor ha cumplido el máximo de horas permitidas
-        // - Verificar si el conductor tiene todas sus documentaciones al día
     }
 } 

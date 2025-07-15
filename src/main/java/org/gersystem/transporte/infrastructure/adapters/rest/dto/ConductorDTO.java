@@ -1,8 +1,6 @@
 package org.gersystem.transporte.infrastructure.adapters.rest.dto;
 
 import lombok.Data;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -12,8 +10,11 @@ public class ConductorDTO {
     private String licencia;
     private boolean activo;
     private List<VehiculoDTO> vehiculos;
-    private String createdBy;
-    private LocalDateTime createdDate;
-    private String lastModifiedBy;
-    private LocalDateTime lastModifiedDate;
+
+    @Data
+    public static class VehiculoDTO {
+        private Long id;
+        private String placa;
+        private boolean activo;
+    }
 } 

@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,7 @@ class MantenimientoDomainServiceTest {
     private Vehiculo vehiculo;
     private final Long MANTENIMIENTO_ID = 1L;
     private final Long VEHICULO_ID = 1L;
+    private final String FECHA_PROGRAMADA = LocalDateTime.now().plusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
     @BeforeEach
     void setUp() {
@@ -63,7 +65,7 @@ class MantenimientoDomainServiceTest {
                 eq(VEHICULO_ID), any(), any(), any())).thenReturn(Collections.emptyList());
         when(mantenimientoRepository.save(any(Mantenimiento.class))).thenReturn(mantenimiento);
 
-        Mantenimiento resultado = mantenimientoDomainService.programarMantenimiento(mantenimiento);
+        Mantenimiento resultado = mantenimientoDomainService.programarMantenimiento(mantenimiento, VEHICULO_ID, FECHA_PROGRAMADA);
 
         assertNotNull(resultado);
         assertEquals(MANTENIMIENTO_ID, resultado.getId());
@@ -75,7 +77,7 @@ class MantenimientoDomainServiceTest {
         when(vehiculoRepository.findById(VEHICULO_ID)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () ->
-            mantenimientoDomainService.programarMantenimiento(mantenimiento)
+            mantenimientoDomainService.programarMantenimiento(mantenimiento, VEHICULO_ID, FECHA_PROGRAMADA)
         );
     }
 
@@ -85,7 +87,7 @@ class MantenimientoDomainServiceTest {
         when(vehiculoRepository.findById(VEHICULO_ID)).thenReturn(Optional.of(vehiculo));
 
         assertThrows(IllegalStateException.class, () ->
-            mantenimientoDomainService.programarMantenimiento(mantenimiento)
+            mantenimientoDomainService.programarMantenimiento(mantenimiento, VEHICULO_ID, FECHA_PROGRAMADA)
         );
     }
 

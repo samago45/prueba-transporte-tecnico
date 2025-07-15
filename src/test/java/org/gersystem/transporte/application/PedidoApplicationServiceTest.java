@@ -7,7 +7,6 @@ import org.gersystem.transporte.domain.model.Vehiculo;
 import org.gersystem.transporte.domain.repository.PedidoRepository;
 import org.gersystem.transporte.domain.service.PedidoDomainService;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreatePedidoDTO;
-import org.gersystem.transporte.infrastructure.adapters.rest.dto.PedidoDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.mapper.PedidoMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 
 import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +48,6 @@ class PedidoApplicationServiceTest {
     private PedidoApplicationService pedidoApplicationService;
 
     private Pedido pedido;
-    private PedidoDTO pedidoDTO;
     private CreatePedidoDTO createPedidoDTO;
     private Conductor conductor;
     private Vehiculo vehiculo;
@@ -78,24 +77,16 @@ class PedidoApplicationServiceTest {
         createPedidoDTO = new CreatePedidoDTO();
         createPedidoDTO.setDescripcion("Pedido de prueba");
         createPedidoDTO.setPeso(new BigDecimal("500.00"));
-
-        pedidoDTO = new PedidoDTO();
-        pedidoDTO.setId(1L);
-        pedidoDTO.setDescripcion("Pedido de prueba");
-        pedidoDTO.setPeso(new BigDecimal("500.00"));
-        pedidoDTO.setEstado(EstadoPedido.PENDIENTE);
     }
 
     @Test
     @DisplayName("Debe crear un pedido exitosamente")
     void crearPedido_DebeCrearExitosamente() {
         // Arrange
-        when(pedidoMapper.toEntity(any(CreatePedidoDTO.class))).thenReturn(pedido);
-        when(pedidoDomainService.crearPedido(any(Pedido.class), any(Long.class))).thenReturn(pedido);
-        when(pedidoMapper.toDto(any(Pedido.class))).thenReturn(pedidoDTO);
+        when(pedidoDomainService.crearPedido(any(Pedido.class), eq(1L))).thenReturn(pedido);
 
         // Act
-        PedidoDTO resultado = pedidoApplicationService.crearPedido(createPedidoDTO, 1L);
+        Pedido resultado = pedidoApplicationService.crearPedido(pedido, 1L);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -106,15 +97,13 @@ class PedidoApplicationServiceTest {
 
     @Test
     @DisplayName("Debe actualizar el estado de un pedido exitosamente")
-    void actualizarEstado_DebeActualizarExitosamente() {
+    void actualizarEstadoPedido_DebeActualizarExitosamente() {
         // Arrange
         pedido.setEstado(EstadoPedido.EN_PROCESO);
-        pedidoDTO.setEstado(EstadoPedido.EN_PROCESO);
         when(pedidoDomainService.actualizarEstadoPedido(1L, EstadoPedido.EN_PROCESO)).thenReturn(pedido);
-        when(pedidoMapper.toDto(pedido)).thenReturn(pedidoDTO);
 
         // Act
-        PedidoDTO resultado = pedidoApplicationService.actualizarEstado(1L, EstadoPedido.EN_PROCESO);
+        Pedido resultado = pedidoApplicationService.actualizarEstadoPedido(1L, EstadoPedido.EN_PROCESO);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -126,23 +115,22 @@ class PedidoApplicationServiceTest {
     @DisplayName("Debe obtener un pedido por ID exitosamente")
     void obtenerPedido_DebeObtenerExitosamente() {
         // Arrange
-        when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pedido));
-        when(pedidoMapper.toDto(pedido)).thenReturn(pedidoDTO);
+        when(pedidoDomainService.obtenerPedido(1L)).thenReturn(pedido);
 
         // Act
-        PedidoDTO resultado = pedidoApplicationService.obtenerPedido(1L);
+        Pedido resultado = pedidoApplicationService.obtenerPedido(1L);
 
         // Assert
         assertThat(resultado).isNotNull();
         assertThat(resultado.getId()).isEqualTo(1L);
-        verify(pedidoRepository).findById(1L);
+        verify(pedidoDomainService).obtenerPedido(1L);
     }
 
     @Test
     @DisplayName("Debe lanzar EntityNotFoundException cuando el pedido no existe")
     void obtenerPedido_DebeLanzarExcepcion_CuandoNoExiste() {
         // Arrange
-        when(pedidoRepository.findById(1L)).thenReturn(Optional.empty());
+        when(pedidoDomainService.obtenerPedido(1L)).thenThrow(new EntityNotFoundException("Pedido no encontrado"));
 
         // Act & Assert
         assertThatThrownBy(() -> pedidoApplicationService.obtenerPedido(1L))
@@ -151,43 +139,29 @@ class PedidoApplicationServiceTest {
     }
 
     @Test
-    @DisplayName("Debe listar pedidos paginados por estado")
-    void listarPedidos_DebeListarPorEstado() {
+    @DisplayName("Debe buscar pedidos con filtros")
+    void buscarPedidos_DebeListarConFiltros() {
         // Arrange
         Pageable pageable = PageRequest.of(0, 10);
         Page<Pedido> pedidosPage = new PageImpl<>(List.of(pedido));
-        Page<PedidoDTO> expectedPage = new PageImpl<>(List.of(pedidoDTO));
+        LocalDateTime fechaInicio = LocalDateTime.now().minusDays(7);
+        LocalDateTime fechaFin = LocalDateTime.now();
 
-        when(pedidoRepository.findByEstado(EstadoPedido.PENDIENTE, pageable)).thenReturn(pedidosPage);
-        when(pedidoMapper.toDto(pedido)).thenReturn(pedidoDTO);
+        when(pedidoDomainService.buscarPedidos(
+            EstadoPedido.PENDIENTE, 1L, null, fechaInicio, fechaFin, pageable)
+        ).thenReturn(pedidosPage);
 
         // Act
-        Page<PedidoDTO> resultado = pedidoApplicationService.listarPedidos(EstadoPedido.PENDIENTE, null, pageable);
+        Page<Pedido> resultado = pedidoApplicationService.buscarPedidos(
+            EstadoPedido.PENDIENTE, 1L, null, fechaInicio, fechaFin, pageable
+        );
 
         // Assert
         assertThat(resultado).isNotNull();
         assertThat(resultado.getContent()).hasSize(1);
         assertThat(resultado.getContent().get(0).getEstado()).isEqualTo(EstadoPedido.PENDIENTE);
-        verify(pedidoRepository).findByEstado(EstadoPedido.PENDIENTE, pageable);
-    }
-
-    @Test
-    @DisplayName("Debe listar pedidos paginados por conductor")
-    void listarPedidos_DebeListarPorConductor() {
-        // Arrange
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<Pedido> pedidosPage = new PageImpl<>(List.of(pedido));
-        Page<PedidoDTO> expectedPage = new PageImpl<>(List.of(pedidoDTO));
-
-        when(pedidoRepository.findByConductorId(1L, pageable)).thenReturn(pedidosPage);
-        when(pedidoMapper.toDto(pedido)).thenReturn(pedidoDTO);
-
-        // Act
-        Page<PedidoDTO> resultado = pedidoApplicationService.listarPedidos(null, 1L, pageable);
-
-        // Assert
-        assertThat(resultado).isNotNull();
-        assertThat(resultado.getContent()).hasSize(1);
-        verify(pedidoRepository).findByConductorId(1L, pageable);
+        verify(pedidoDomainService).buscarPedidos(
+            EstadoPedido.PENDIENTE, 1L, null, fechaInicio, fechaFin, pageable
+        );
     }
 } 

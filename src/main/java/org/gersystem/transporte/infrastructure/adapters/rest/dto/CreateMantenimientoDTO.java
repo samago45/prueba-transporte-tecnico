@@ -4,8 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.gersystem.transporte.domain.model.TipoMantenimiento;
 
-import java.time.LocalDateTime;
-
 @Data
 public class CreateMantenimientoDTO {
     
@@ -13,7 +11,7 @@ public class CreateMantenimientoDTO {
     private Long vehiculoId;
     
     @NotNull(message = "La fecha programada es requerida")
-    private LocalDateTime fechaProgramada;
+    private String fechaProgramada;
     
     @NotNull(message = "El tipo de mantenimiento es requerido")
     private TipoMantenimiento tipo;

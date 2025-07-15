@@ -1,6 +1,7 @@
 package org.gersystem.transporte.domain.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.gersystem.transporte.application.exception.BusinessException;
 import org.gersystem.transporte.domain.model.Conductor;
 import org.gersystem.transporte.domain.model.EstadoPedido;
 import org.gersystem.transporte.domain.model.Pedido;
@@ -107,7 +108,7 @@ class PedidoDomainServiceTest {
 
         // Act & Assert
         assertThatThrownBy(() -> pedidoDomainService.crearPedido(pedido, 1L))
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(BusinessException.class)
                 .hasMessage("El vehículo no está activo");
     }
 
@@ -121,7 +122,7 @@ class PedidoDomainServiceTest {
 
         // Act & Assert
         assertThatThrownBy(() -> pedidoDomainService.crearPedido(pedido, 1L))
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(BusinessException.class)
                 .hasMessage("El vehículo no tiene capacidad suficiente");
     }
 
@@ -149,7 +150,7 @@ class PedidoDomainServiceTest {
 
         // Act & Assert
         assertThatThrownBy(() -> pedidoDomainService.actualizarEstadoPedido(1L, EstadoPedido.EN_PROCESO))
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(BusinessException.class)
                 .hasMessage("No se puede cambiar el estado de un pedido completado o cancelado");
     }
 } 

@@ -16,4 +16,8 @@ public class CreatePedidoDTO {
     @NotNull(message = "El peso es requerido")
     @Positive(message = "El peso debe ser mayor a 0")
     private BigDecimal peso;
+    
+    @NotNull(message = "El ID del vehículo es requerido")
+    @Positive(message = "El ID del vehículo debe ser mayor a 0")
+    private Long vehiculoId;
 } 

@@ -1,13 +1,17 @@
 package org.gersystem.transporte.domain.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.gersystem.transporte.application.exception.BusinessException;
 import org.gersystem.transporte.domain.model.*;
 import org.gersystem.transporte.domain.repository.MantenimientoRepository;
 import org.gersystem.transporte.domain.repository.VehiculoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,10 +29,17 @@ public class MantenimientoDomainService {
     }
 
     @Transactional
-    public Mantenimiento programarMantenimiento(Mantenimiento mantenimiento) {
-        validarVehiculoActivo(mantenimiento.getVehiculo().getId());
-        validarFechaProgramada(mantenimiento.getFechaProgramada());
-        validarMantenimientosPendientes(mantenimiento.getVehiculo().getId(), mantenimiento.getFechaProgramada());
+    public Mantenimiento programarMantenimiento(Mantenimiento mantenimiento, Long vehiculoId, String fechaProgramadaStr) {
+        // Validar y obtener vehículo
+        Vehiculo vehiculo = obtenerYValidarVehiculo(vehiculoId);
+        mantenimiento.setVehiculo(vehiculo);
+        
+        // Convertir y validar fecha
+        LocalDateTime fechaProgramada = convertirYValidarFecha(fechaProgramadaStr);
+        mantenimiento.setFechaProgramada(fechaProgramada);
+        
+        validarFechaProgramada(fechaProgramada);
+        validarMantenimientosPendientes(vehiculo.getId(), fechaProgramada);
         
         return mantenimientoRepository.save(mantenimiento);
     }
@@ -66,18 +77,44 @@ public class MantenimientoDomainService {
         return mantenimientoRepository.findAll(pageable);
     }
 
-    private void validarVehiculoActivo(Long vehiculoId) {
+    private Vehiculo obtenerYValidarVehiculo(Long vehiculoId) {
+        if (vehiculoId == null) {
+            throw new IllegalArgumentException("El ID del vehículo es obligatorio");
+        }
         Vehiculo vehiculo = vehiculoRepository.findById(vehiculoId)
-                .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado"));
-
+                .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado con ID: " + vehiculoId));
+        
         if (!vehiculo.isActivo()) {
-            throw new IllegalStateException("No se puede programar mantenimiento para un vehículo inactivo");
+            throw new IllegalStateException("El vehículo no está activo");
+        }
+        
+        return vehiculo;
+    }
+
+    private LocalDateTime convertirYValidarFecha(String fecha) {
+        if (fecha == null || fecha.trim().isEmpty()) {
+            throw new BusinessException("La fecha programada es obligatoria");
+        }
+
+        try {
+            // Intenta primero con formato completo ISO
+            if (fecha.contains("T")) {
+                return LocalDateTime.parse(fecha);
+            }
+            
+            // Si solo es fecha (YYYY-MM-DD), agrega la hora 00:00
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate localDate = LocalDate.parse(fecha, formatter);
+            return localDate.atStartOfDay();
+            
+        } catch (DateTimeParseException e) {
+            throw new BusinessException("Formato de fecha inválido. Use YYYY-MM-DD o YYYY-MM-DDTHH:mm:ss");
         }
     }
 
     private void validarFechaProgramada(LocalDateTime fechaProgramada) {
         if (fechaProgramada.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("La fecha programada no puede ser anterior a la fecha actual");
+            throw new BusinessException("La fecha programada no puede ser anterior a la fecha actual");
         }
     }
 
@@ -91,13 +128,13 @@ public class MantenimientoDomainService {
                 );
 
         if (!mantenimientosPendientes.isEmpty()) {
-            throw new IllegalStateException("Ya existe un mantenimiento programado para este vehículo en un rango de 24 horas");
+            throw new BusinessException("Ya existe un mantenimiento programado para este vehículo en un rango de 24 horas");
         }
     }
 
     private void validarTransicionEstado(EstadoMantenimiento estadoActual, EstadoMantenimiento nuevoEstado) {
         if (estadoActual == EstadoMantenimiento.COMPLETADO || estadoActual == EstadoMantenimiento.CANCELADO) {
-            throw new IllegalStateException("No se puede modificar un mantenimiento completado o cancelado");
+            throw new IllegalStateException("No se puede modificar un mantenimiento cancelado");
         }
 
         if (estadoActual == EstadoMantenimiento.PENDIENTE && nuevoEstado == EstadoMantenimiento.COMPLETADO) {

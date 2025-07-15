@@ -40,7 +40,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setSubject(usuario.getUsername())
-                .claim("auth", authorities)
+                .claim("auth", authorities)  // Ya incluye el prefijo ROLE_ desde getAuthorities()
                 .claim("userId", usuario.getId())
                 .setIssuedAt(now)
                 .setExpiration(validity)

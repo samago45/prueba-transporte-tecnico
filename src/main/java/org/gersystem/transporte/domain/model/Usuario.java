@@ -37,9 +37,6 @@ public class Usuario extends Auditable implements UserDetails {
 
     private String apellido;
 
-    @Enumerated(EnumType.STRING)
-    private Rol rol;
-
     @ElementCollection(targetClass = Rol.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "usuario_rol", joinColumns = @JoinColumn(name = "usuario_id"))
     @Enumerated(EnumType.STRING)

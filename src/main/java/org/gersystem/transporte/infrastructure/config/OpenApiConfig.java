@@ -7,8 +7,12 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 @OpenAPIDefinition(
@@ -26,9 +30,17 @@ import org.springframework.context.annotation.Configuration;
 )
 public class OpenApiConfig {
 
+    @Value("${server.port:8081}")
+    private String serverPort;
+
     @Bean
     public OpenAPI customOpenAPI() {
+        Server localServer = new Server()
+            .url("http://localhost:" + serverPort)
+            .description("Servidor Local");
+
         return new OpenAPI()
+            .servers(List.of(localServer))
             .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
             .components(new Components());
     }
