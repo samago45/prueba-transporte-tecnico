@@ -3,19 +3,21 @@ package org.gersystem.transporte.infrastructure.adapters.rest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.gersystem.transporte.application.PedidoApplicationService;
+import org.gersystem.transporte.application.exception.BusinessException;
 import org.gersystem.transporte.application.exception.ValidationException;
 import org.gersystem.transporte.domain.model.EstadoPedido;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreatePedidoDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.ErrorResponseDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.PedidoDTO;
+import org.gersystem.transporte.infrastructure.adapters.rest.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -35,8 +37,15 @@ public class PedidoController {
     @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
     @Operation(
         summary = "Crear un nuevo pedido",
-        description = "Crea un nuevo pedido en el sistema asignándolo a un vehículo específico. " +
-                     "El pedido inicia en estado PENDIENTE y requiere la información completa de origen, destino y carga."
+        description = """
+            Crea un nuevo pedido en el sistema asignándolo a un vehículo específico.
+            
+            Reglas de negocio:
+            - El vehículo debe estar activo
+            - El vehículo debe tener capacidad suficiente para el pedido
+            - El conductor asignado al vehículo debe estar activo
+            - El pedido inicia en estado PENDIENTE
+            """
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -44,26 +53,18 @@ public class PedidoController {
             description = "Pedido creado exitosamente",
             content = @Content(
                 mediaType = "application/json",
-                schema = @Schema(implementation = PedidoDTO.class),
-                examples = @ExampleObject(value = """
-                    {
-                        "id": 1,
-                        "origen": "Calle 123 #45-67",
-                        "destino": "Carrera 89 #12-34",
-                        "estado": "PENDIENTE",
-                        "peso": 1500.5,
-                        "volumen": 2.5,
-                        "fechaCreacion": "2024-03-20T10:30:00",
-                        "fechaEntrega": null,
-                        "vehiculoId": 5,
-                        "conductorId": 3
-                    }
-                    """)
+                schema = @Schema(implementation = PedidoDTO.class)
             )
         ),
         @ApiResponse(
             responseCode = "400",
-            description = "Datos del pedido inválidos o vehículo no disponible",
+            description = """
+                Error de validación:
+                - Vehículo inactivo
+                - Capacidad insuficiente
+                - Conductor inactivo
+                - Datos del pedido inválidos
+                """,
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = ErrorResponseDTO.class)
@@ -90,10 +91,18 @@ public class PedidoController {
             @Valid @RequestBody CreatePedidoDTO createPedidoDTO,
             @Parameter(description = "ID del vehículo al que se asignará el pedido", required = true)
             @RequestParam Long vehiculoId) {
-        if (vehiculoId <= 0) {
-            throw new ValidationException("El ID del vehículo debe ser un número positivo");
+        try {
+            if (vehiculoId <= 0) {
+                throw new ValidationException("El ID del vehículo debe ser un número positivo");
+            }
+            return ResponseEntity.ok(pedidoApplicationService.crearPedido(createPedidoDTO, vehiculoId));
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(e.getMessage());
+        } catch (IllegalStateException e) {
+            throw new BusinessException("Error de validación: " + e.getMessage());
+        } catch (ValidationException e) {
+            throw new ValidationException(e.getMessage());
         }
-        return ResponseEntity.ok(pedidoApplicationService.crearPedido(createPedidoDTO, vehiculoId));
     }
 
     @PatchMapping("/{id}/estado")

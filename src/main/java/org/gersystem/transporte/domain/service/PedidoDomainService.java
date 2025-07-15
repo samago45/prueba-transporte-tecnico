@@ -1,6 +1,7 @@
 package org.gersystem.transporte.domain.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.gersystem.transporte.application.exception.BusinessException;
 import org.gersystem.transporte.domain.model.Conductor;
 import org.gersystem.transporte.domain.model.EstadoPedido;
 import org.gersystem.transporte.domain.model.Pedido;
@@ -61,7 +62,7 @@ public class PedidoDomainService {
 
     private void validarVehiculoActivo(Vehiculo vehiculo) {
         if (!vehiculo.isActivo()) {
-            throw new IllegalStateException("El vehículo no está activo");
+            throw new BusinessException("El vehículo no está activo");
         }
     }
 
@@ -77,23 +78,23 @@ public class PedidoDomainService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         if (pesoTotal.add(pesoPedido).compareTo(capacidadDisponible) > 0) {
-            throw new IllegalStateException("El vehículo no tiene capacidad suficiente");
+            throw new BusinessException("El vehículo no tiene capacidad suficiente");
         }
     }
 
     private void validarConductorActivo(Conductor conductor) {
         if (conductor == null || !conductor.isActivo()) {
-            throw new IllegalStateException("El conductor no está activo o no existe");
+            throw new BusinessException("El conductor no está activo o no existe");
         }
     }
 
     private void validarTransicionEstado(EstadoPedido estadoActual, EstadoPedido nuevoEstado) {
         if (estadoActual == EstadoPedido.ENTREGADO || estadoActual == EstadoPedido.CANCELADO) {
-            throw new IllegalStateException("No se puede cambiar el estado de un pedido completado o cancelado");
+            throw new BusinessException("No se puede cambiar el estado de un pedido completado o cancelado");
         }
 
         if (estadoActual == EstadoPedido.PENDIENTE && nuevoEstado == EstadoPedido.ENTREGADO) {
-            throw new IllegalStateException("Un pedido pendiente no puede pasar directamente a completado");
+            throw new BusinessException("Un pedido pendiente no puede pasar directamente a completado");
         }
     }
 } 
