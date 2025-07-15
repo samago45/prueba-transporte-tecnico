@@ -9,10 +9,14 @@ ON DUPLICATE KEY UPDATE
     activo = true;
 
 -- Asignar el rol de ADMIN al usuario 'admin'
--- Primero, obtenemos el ID del usuario 'admin'
-SET @admin_id = (SELECT id FROM usuario WHERE username = 'admin');
-
--- Insertar el rol, evitando duplicados
+-- Usar una subconsulta directa para evitar problemas con variables
 INSERT INTO usuario_rol (usuario_id, roles)
-SELECT @admin_id, 'ADMIN'
-WHERE NOT EXISTS (SELECT 1 FROM usuario_rol WHERE usuario_id = @admin_id AND roles = 'ADMIN'); 
+SELECT id, 'ADMIN' 
+FROM usuario 
+WHERE username = 'admin'
+AND NOT EXISTS (
+    SELECT 1 
+    FROM usuario_rol ur 
+    WHERE ur.usuario_id = usuario.id 
+    AND ur.roles = 'ADMIN'
+); 

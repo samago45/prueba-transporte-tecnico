@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class MantenimientoIntegrationTest {
 
     @Autowired
@@ -61,7 +62,6 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe completar flujo de mantenimiento exitosamente")
     @Transactional
-    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoCompletoMantenimiento_DebeCompletarseCorrectamente() {
         // Act - Programar mantenimiento
         Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(mantenimiento, vehiculo.getId(), fechaProgramada);
@@ -90,7 +90,6 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe manejar mantenimiento de vehículo inactivo")
     @Transactional
-    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoMantenimiento_DebeManejarVehiculoInactivo() {
         // Arrange - Desactivar vehículo
         vehiculo.setActivo(false);
@@ -105,7 +104,6 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe validar transiciones de estado correctamente")
     @Transactional
-    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoMantenimiento_DebeValidarTransicionesEstado() {
         // Arrange - Crear mantenimiento inicial
         mantenimiento.setEstado(EstadoMantenimiento.PENDIENTE);
@@ -121,7 +119,6 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe manejar múltiples mantenimientos para un vehículo")
     @Transactional
-    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoMantenimiento_DebeManejarMultiplesMantenimientos() {
         // Act - Programar primer mantenimiento
         Mantenimiento primerMantenimiento = mantenimientoDomainService.programarMantenimiento(mantenimiento, vehiculo.getId(), fechaProgramada);
@@ -151,7 +148,6 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe cancelar mantenimiento correctamente")
     @Transactional
-    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoMantenimiento_DebeCancelarCorrectamente() {
         // Arrange - Crear mantenimiento inicial
         Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(mantenimiento, vehiculo.getId(), fechaProgramada);

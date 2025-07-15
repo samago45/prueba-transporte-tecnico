@@ -10,14 +10,7 @@ Sistema backend para la gestión de transporte urbano que permite administrar ve
 - `dev`: Rama de desarrollo, integración de nuevas características
 - `test`: Rama para pruebas y validación de funcionalidades
 
-### Flujo de Desarrollo
-1. Crear rama feature desde `dev`: `feature/nombre-funcionalidad`
-2. Desarrollar y probar localmente
-3. Crear Pull Request hacia `dev`
-4. Revisión de código y CI/CD checks
-5. Merge a `dev` si todo está correcto
-6. Promoción a `test` para pruebas integradas
-7. Merge final a `main` para producción
+
 
 ## CI/CD Pipeline
 
@@ -140,6 +133,10 @@ mvn test
 
 # Pruebas de integración
 mvn verify -P integration-test
+
+# Pruebas de rendimiento
+cd performance-tests
+./run-load-test.sh
 ```
 
 ### Análisis de Código
@@ -149,6 +146,9 @@ mvn verify sonar:sonar
 
 # Solo cobertura
 mvn jacoco:report
+
+# Análisis de calidad
+mvn spotbugs:check
 ```
 
 ### Generación de Documentación
@@ -168,12 +168,19 @@ mvn springdoc:generate
 - Nivel: INFO en producción, DEBUG en desarrollo
 
 ### Métricas de Aplicación
-- Prometheus endpoints habilitados
-- Dashboard Grafana disponible
-- Alertas configuradas para:
+- **Spring Boot Actuator** con endpoints de salud y métricas
+- **Prometheus** para recolección de métricas (http://localhost:9090)
+- **Grafana** para visualización de dashboards (http://localhost:3000)
+- **Métricas de negocio** personalizadas:
+  - Pedidos por hora
+  - Vehículos disponibles
+  - Tiempo de respuesta de APIs
+  - Tasa de éxito de asignaciones
+- **Alertas configuradas** para:
   - Uso de CPU > 80%
   - Memoria > 85%
-  - Latencia API > 500ms
+  - Latencia API > 2 segundos
+  - Error rate > 5%
 
 ### Backup y Recuperación
 ```bash
