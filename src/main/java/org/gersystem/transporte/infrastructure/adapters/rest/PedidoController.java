@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,17 +78,23 @@ public class PedidoController {
     @Operation(summary = "Crear pedido", description = "Crea un nuevo pedido")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PedidoDTO> crearPedido(@Valid @RequestBody CreatePedidoDTO createPedidoDTO) {
-        return ResponseEntity.ok(
-            pedidoMapper.toDto(
+        try {
+            PedidoDTO pedidoCreado = pedidoMapper.toDto(
                 pedidoService.crearPedido(
                     pedidoMapper.toEntity(createPedidoDTO),
                     createPedidoDTO.getVehiculoId()
                 )
-            )
-        );
+            );
+            return ResponseEntity.status(HttpStatus.CREATED).body(pedidoCreado);
+        } catch (BusinessException e) {
+            if (e.getMessage().contains("capacidad")) {
+                throw new BusinessException("El vehículo no tiene capacidad suficiente");
+            }
+            throw e;
+        }
     }
 
-    @PatchMapping("/{id}/estado")
+    @PutMapping("/{id}/estado")
     @Operation(summary = "Actualizar estado", description = "Actualiza el estado de un pedido")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PedidoDTO> actualizarEstado(

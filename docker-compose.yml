@@ -4,12 +4,12 @@ services:
   mysql:
     image: 'mysql:8.0'
     environment:
-      - 'MYSQL_DATABASE=appdb'
-      - 'MYSQL_PASSWORD=secretAppPwd'
-      - 'MYSQL_ROOT_PASSWORD=rootpassword'
-      - 'MYSQL_USER=appuser'
+      MYSQL_DATABASE: ${DB_NAME:-appdb}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secretAppPwd}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_USER: ${DB_USER:-appuser}
     ports:
-      - '3307:3306'
+      - '3306:3306'
     volumes:
       - mysql-data:/var/lib/mysql
       - ./src/main/resources/db/migration:/docker-entrypoint-initdb.d
@@ -22,34 +22,58 @@ services:
   transporte-app:
     build: .
     ports:
-      - '8081:8081'
+      - '8080:8080'
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/appdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Asuncion
-      - SPRING_DATASOURCE_USERNAME=appuser
-      - SPRING_DATASOURCE_PASSWORD=secretAppPwd
-      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_JPA_SHOW_SQL=true
-      - JWT_SECRET=secretoSuperSecretoQueDebeEstarEnVariablesDeEntorno
-      - JWT_EXPIRATION_IN_MS=3600000
-      - SPRING_FLYWAY_ENABLED=true
-      - SPRING_FLYWAY_LOCATIONS=classpath:db/migration
-      - SPRING_FLYWAY_BASELINE_ON_MIGRATE=true
-      - SPRINGDOC_SWAGGER_UI_PATH=/swagger-ui.html
-      - SPRINGDOC_API_DOCS_PATH=/api-docs
-      - SPRINGDOC_SWAGGER_UI_CONFIGURL=/api-docs/swagger-config
-      - SPRINGDOC_SWAGGER_UI_URL=/api-docs
-      - SPRINGDOC_SWAGGER_UI_DISABLE_SWAGGER_DEFAULT_URL=true
+      # Configuración de Base de Datos
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DB_NAME:-appdb}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Asuncion
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-appuser}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-secretAppPwd}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      
+      # Configuración JPA
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      
+      # Configuración de Seguridad
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_IN_MS: ${JWT_EXPIRATION:-3600000}
+      
+      # Configuración de Migraciones
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_FLYWAY_LOCATIONS: classpath:db/migration
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+      
+      # Configuración de Swagger
+      SPRINGDOC_SWAGGER_UI_PATH: /swagger-ui.html
+      SPRINGDOC_API_DOCS_PATH: /api-docs
+      
+      # Configuración de Actuator
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics,prometheus
+      
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 5
     volumes:
       - ./src/main/resources/db/migration:/app/db/migration
+
+  # Servicio para pruebas locales con H2 (opcional)
+  transporte-app-test:
+    build: .
+    profiles: ["test"]
+    ports:
+      - '8081:8080'
+    environment:
+      SPRING_PROFILES_ACTIVE: test
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.H2Dialect
+      SPRING_H2_CONSOLE_ENABLED: "true"
 
 volumes:
   mysql-data:

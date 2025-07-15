@@ -79,13 +79,13 @@ public class MantenimientoDomainService {
 
     private Vehiculo obtenerYValidarVehiculo(Long vehiculoId) {
         if (vehiculoId == null) {
-            throw new BusinessException("El ID del vehículo es obligatorio");
+            throw new IllegalArgumentException("El ID del vehículo es obligatorio");
         }
         Vehiculo vehiculo = vehiculoRepository.findById(vehiculoId)
-                .orElseThrow(() -> new BusinessException("Vehículo no encontrado con ID: " + vehiculoId));
+                .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado con ID: " + vehiculoId));
         
         if (!vehiculo.isActivo()) {
-            throw new BusinessException("No se puede programar mantenimiento para un vehículo inactivo");
+            throw new IllegalStateException("El vehículo no está activo");
         }
         
         return vehiculo;
@@ -134,7 +134,7 @@ public class MantenimientoDomainService {
 
     private void validarTransicionEstado(EstadoMantenimiento estadoActual, EstadoMantenimiento nuevoEstado) {
         if (estadoActual == EstadoMantenimiento.COMPLETADO || estadoActual == EstadoMantenimiento.CANCELADO) {
-            throw new IllegalStateException("No se puede modificar un mantenimiento completado o cancelado");
+            throw new IllegalStateException("No se puede modificar un mantenimiento cancelado");
         }
 
         if (estadoActual == EstadoMantenimiento.PENDIENTE && nuevoEstado == EstadoMantenimiento.COMPLETADO) {

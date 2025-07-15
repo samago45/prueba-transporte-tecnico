@@ -41,7 +41,7 @@ class MantenimientoDomainServiceTest {
     private Vehiculo vehiculo;
     private final Long MANTENIMIENTO_ID = 1L;
     private final Long VEHICULO_ID = 1L;
-    private final String FECHA_PROGRAMADA = "2024-12-31";
+    private final String FECHA_PROGRAMADA = LocalDateTime.now().plusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
     @BeforeEach
     void setUp() {

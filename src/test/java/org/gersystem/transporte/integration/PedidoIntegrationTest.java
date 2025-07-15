@@ -1,5 +1,6 @@
 package org.gersystem.transporte.integration;
 
+import org.gersystem.transporte.TransporteApplication;
 import org.gersystem.transporte.domain.model.Conductor;
 import org.gersystem.transporte.domain.model.EstadoPedido;
 import org.gersystem.transporte.domain.model.Pedido;
@@ -8,6 +9,9 @@ import org.gersystem.transporte.domain.repository.ConductorRepository;
 import org.gersystem.transporte.domain.repository.PedidoRepository;
 import org.gersystem.transporte.domain.repository.VehiculoRepository;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreatePedidoDTO;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.ErrorResponseDTO;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.JwtAuthenticationResponseDTO;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.LoginRequestDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.PedidoDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,39 +25,63 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.core.ParameterizedTypeReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.gersystem.transporte.domain.model.Usuario;
+import org.gersystem.transporte.domain.model.Rol;
+import org.gersystem.transporte.domain.repository.UsuarioRepository;
+import java.util.List;
+import org.springframework.test.annotation.DirtiesContext;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = TransporteApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class PedidoIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private PedidoRepository pedidoRepository;
+    private ConductorRepository conductorRepository;
 
     @Autowired
     private VehiculoRepository vehiculoRepository;
 
     @Autowired
-    private ConductorRepository conductorRepository;
+    private PedidoRepository pedidoRepository;
 
-    private String token;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Value("${local.server.port}")
+    private int port;
+
     private Conductor conductor;
     private Vehiculo vehiculo;
+    private String token;
 
     @BeforeEach
     void setUp() {
-        // Configurar datos de prueba
+        // Crear conductor
         conductor = new Conductor();
         conductor.setNombre("Juan Pérez");
+        conductor.setLicencia("A12345");
         conductor.setActivo(true);
         conductor = conductorRepository.save(conductor);
 
+        // Crear vehículo
         vehiculo = new Vehiculo();
         vehiculo.setPlaca("ABC123");
         vehiculo.setCapacidad(new BigDecimal("1000.00"));
@@ -61,8 +89,36 @@ class PedidoIntegrationTest {
         vehiculo.setConductor(conductor);
         vehiculo = vehiculoRepository.save(vehiculo);
 
+        // Crear usuario de prueba si no existe
+        String testEmail = "admin@test.com";
+        if (!usuarioRepository.existsByEmail(testEmail)) {
+            Usuario usuario = new Usuario();
+            usuario.setUsername("admin");
+            usuario.setPassword(passwordEncoder.encode("admin"));
+            usuario.setEmail(testEmail);
+            usuario.setNombre("Admin");
+            usuario.setActivo(true);
+            usuario.setRoles(List.of(Rol.ADMIN));
+            usuarioRepository.save(usuario);
+        }
+
         // Obtener token de autenticación
-        token = obtenerToken();
+        LoginRequestDTO loginRequest = new LoginRequestDTO();
+        loginRequest.setUsernameOrEmail("admin");
+        loginRequest.setPassword("admin");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<LoginRequestDTO> request = new HttpEntity<>(loginRequest, headers);
+
+        ResponseEntity<JwtAuthenticationResponseDTO> response = restTemplate.exchange(
+            "/api/v1/auth/login",
+            HttpMethod.POST,
+            request,
+            JwtAuthenticationResponseDTO.class
+        );
+
+        token = response.getBody().getAccessToken();
     }
 
     @Test
@@ -72,18 +128,20 @@ class PedidoIntegrationTest {
         CreatePedidoDTO createPedidoDTO = new CreatePedidoDTO();
         createPedidoDTO.setDescripcion("Pedido de prueba integración");
         createPedidoDTO.setPeso(new BigDecimal("500.00"));
+        createPedidoDTO.setVehiculoId(vehiculo.getId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<CreatePedidoDTO> request = new HttpEntity<>(createPedidoDTO, headers);
 
         ResponseEntity<PedidoDTO> response = restTemplate.postForEntity(
-                "/api/v1/pedidos?vehiculoId=" + vehiculo.getId(),
+                "/api/v1/pedidos",
                 request,
                 PedidoDTO.class
         );
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().getEstado()).isEqualTo(EstadoPedido.PENDIENTE);
 
@@ -91,7 +149,7 @@ class PedidoIntegrationTest {
         Long pedidoId = response.getBody().getId();
         ResponseEntity<PedidoDTO> updateResponse = restTemplate.exchange(
                 "/api/v1/pedidos/" + pedidoId + "/estado?nuevoEstado=EN_PROCESO",
-                org.springframework.http.HttpMethod.PUT,
+                org.springframework.http.HttpMethod.PATCH,
                 new HttpEntity<>(headers),
                 PedidoDTO.class
         );
@@ -108,30 +166,27 @@ class PedidoIntegrationTest {
     }
 
     @Test
-    @DisplayName("Debe validar capacidad del vehículo al crear pedido")
+    @DisplayName("Debe validar capacidad al crear pedido")
     void crearPedido_DebeValidarCapacidad() {
-        // Crear pedido que excede capacidad
-        CreatePedidoDTO createPedidoDTO = new CreatePedidoDTO();
-        createPedidoDTO.setDescripcion("Pedido excede capacidad");
-        createPedidoDTO.setPeso(new BigDecimal("1500.00")); // Excede capacidad de 1000
+        // Arrange
+        CreatePedidoDTO pedidoDTO = new CreatePedidoDTO();
+        pedidoDTO.setDescripcion("Pedido de prueba");
+        pedidoDTO.setPeso(new BigDecimal("2000.00")); // Excede la capacidad
+        pedidoDTO.setVehiculoId(vehiculo.getId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
-        HttpEntity<CreatePedidoDTO> request = new HttpEntity<>(createPedidoDTO, headers);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<CreatePedidoDTO> request = new HttpEntity<>(pedidoDTO, headers);
 
-        ResponseEntity<String> response = restTemplate.postForEntity(
-                "/api/v1/pedidos?vehiculoId=" + vehiculo.getId(),
-                request,
-                String.class
+        // Act & Assert
+        ResponseEntity<ErrorResponseDTO> response = restTemplate.postForEntity(
+            "/api/v1/pedidos",
+            request,
+            ErrorResponseDTO.class
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody()).contains("capacidad");
-    }
-
-    private String obtenerToken() {
-        // Implementar lógica para obtener token de autenticación
-        // Este es un ejemplo simplificado
-        return "token_de_prueba";
+        assertThat(response.getBody().getMessage()).contains("El vehículo no tiene capacidad suficiente");
     }
 } 

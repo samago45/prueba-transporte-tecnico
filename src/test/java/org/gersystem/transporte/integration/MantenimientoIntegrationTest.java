@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -60,6 +61,7 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe completar flujo de mantenimiento exitosamente")
     @Transactional
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoCompletoMantenimiento_DebeCompletarseCorrectamente() {
         // Act - Programar mantenimiento
         Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(mantenimiento, vehiculo.getId(), fechaProgramada);
@@ -88,6 +90,7 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe manejar mantenimiento de vehículo inactivo")
     @Transactional
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoMantenimiento_DebeManejarVehiculoInactivo() {
         // Arrange - Desactivar vehículo
         vehiculo.setActivo(false);
@@ -102,20 +105,23 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe validar transiciones de estado correctamente")
     @Transactional
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoMantenimiento_DebeValidarTransicionesEstado() {
         // Arrange - Crear mantenimiento inicial
+        mantenimiento.setEstado(EstadoMantenimiento.PENDIENTE);
         Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(mantenimiento, vehiculo.getId(), fechaProgramada);
 
         // Act & Assert - Intentar completar sin iniciar
         assertThatThrownBy(() -> mantenimientoDomainService
                 .actualizarEstadoMantenimiento(mantenimientoCreado.getId(), EstadoMantenimiento.COMPLETADO))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Transición de estado inválida");
+                .hasMessageContaining("Un mantenimiento debe pasar por el estado EN_PROCESO antes de completarse");
     }
 
     @Test
     @DisplayName("Debe manejar múltiples mantenimientos para un vehículo")
     @Transactional
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoMantenimiento_DebeManejarMultiplesMantenimientos() {
         // Act - Programar primer mantenimiento
         Mantenimiento primerMantenimiento = mantenimientoDomainService.programarMantenimiento(mantenimiento, vehiculo.getId(), fechaProgramada);
@@ -145,6 +151,7 @@ class MantenimientoIntegrationTest {
     @Test
     @DisplayName("Debe cancelar mantenimiento correctamente")
     @Transactional
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     void flujoMantenimiento_DebeCancelarCorrectamente() {
         // Arrange - Crear mantenimiento inicial
         Mantenimiento mantenimientoCreado = mantenimientoDomainService.programarMantenimiento(mantenimiento, vehiculo.getId(), fechaProgramada);

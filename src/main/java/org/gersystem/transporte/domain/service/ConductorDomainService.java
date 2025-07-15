@@ -112,13 +112,17 @@ public class ConductorDomainService {
     }
 
     public void validarLimiteDeVehiculos(Conductor conductor) {
+        if (conductor.getVehiculos() == null) {
+            conductor.setVehiculos(new ArrayList<>());
+        }
+
         List<Vehiculo> vehiculosActivos = conductor.getVehiculos().stream()
                 .filter(Vehiculo::isActivo)
                 .toList();
 
         if (vehiculosActivos.size() >= maxVehiculosPorConductor) {
             throw new IllegalStateException(
-                    String.format("El conductor ya tiene el máximo de %d vehículos permitidos", maxVehiculosPorConductor)
+                "El conductor ya tiene el máximo de vehículos permitidos"
             );
         }
     }
