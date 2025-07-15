@@ -4,20 +4,30 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Builder
 public class EstadisticasDTO {
-    private long totalConductores;
-    private long conductoresActivos;
-    private long totalVehiculos;
-    private long vehiculosActivos;
-    private long totalPedidos;
-    private long pedidosEnProceso;
-    private long pedidosEntregados;
+    private Long totalConductores;
+    private Long conductoresActivos;
+    private Long totalVehiculos;
+    private Long vehiculosActivos;
+    private Long totalPedidos;
+    private Long pedidosEnProceso;
+    private Long pedidosEntregados;
     private BigDecimal pesoTotalTransportado;
-    private double promedioVehiculosPorConductor;
-    private double porcentajeConductoresActivos;
-    private double porcentajeVehiculosActivos;
-    private double porcentajePedidosEntregados;
+    private Double promedioVehiculosPorConductor;
+    private Double porcentajeConductoresActivos;
+    private Double porcentajeVehiculosActivos;
+    private Double porcentajePedidosEntregados;
+    private List<ConductorSimpleDTO> conductoresSinVehiculos;
+    private List<ConteoVehiculosDTO> vehiculosPorConductor;
+
+    @Data
+    public static class ConductorSimpleDTO {
+        private Long id;
+        private String nombre;
+        private String licencia;
+    }
 } 
