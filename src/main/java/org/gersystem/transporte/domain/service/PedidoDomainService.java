@@ -9,10 +9,15 @@ import org.gersystem.transporte.domain.model.Vehiculo;
 import org.gersystem.transporte.domain.repository.ConductorRepository;
 import org.gersystem.transporte.domain.repository.PedidoRepository;
 import org.gersystem.transporte.domain.repository.VehiculoRepository;
+import org.gersystem.transporte.infrastructure.adapters.repository.PedidoSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -96,5 +101,41 @@ public class PedidoDomainService {
         if (estadoActual == EstadoPedido.PENDIENTE && nuevoEstado == EstadoPedido.ENTREGADO) {
             throw new BusinessException("Un pedido pendiente no puede pasar directamente a completado");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Pedido> buscarPedidos(
+            EstadoPedido estado,
+            Long conductorId,
+            Long vehiculoId,
+            LocalDateTime fechaInicio,
+            LocalDateTime fechaFin,
+            Pageable pageable) {
+        
+        Specification<Pedido> spec = Specification.where(null);
+
+        if (estado != null) {
+            spec = spec.and(PedidoSpecification.conEstado(estado));
+        }
+
+        if (conductorId != null) {
+            spec = spec.and(PedidoSpecification.conConductorId(conductorId));
+        }
+
+        if (vehiculoId != null) {
+            spec = spec.and(PedidoSpecification.conVehiculoId(vehiculoId));
+        }
+
+        if (fechaInicio != null || fechaFin != null) {
+            spec = spec.and(PedidoSpecification.creadoEntreFechas(fechaInicio, fechaFin));
+        }
+
+        return pedidoRepository.findAll(spec, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Pedido obtenerPedido(Long id) {
+        return pedidoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pedido no encontrado"));
     }
 } 
