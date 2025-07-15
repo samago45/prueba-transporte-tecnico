@@ -38,6 +38,18 @@ public class EstadisticasService {
             ? (double) vehiculosActivos / conductoresActivos 
             : 0.0;
 
+        double porcentajeConductoresActivos = totalConductores > 0 
+            ? (double) conductoresActivos * 100 / totalConductores 
+            : 0.0;
+
+        double porcentajeVehiculosActivos = totalVehiculos > 0 
+            ? (double) vehiculosActivos * 100 / totalVehiculos 
+            : 0.0;
+
+        double porcentajePedidosEntregados = totalPedidos > 0 
+            ? (double) pedidosEntregados * 100 / totalPedidos 
+            : 0.0;
+
         return EstadisticasDTO.builder()
                 .totalConductores(totalConductores)
                 .conductoresActivos(conductoresActivos)
@@ -48,6 +60,15 @@ public class EstadisticasService {
                 .pedidosEntregados(pedidosEntregados)
                 .pesoTotalTransportado(pesoTotalTransportado)
                 .promedioVehiculosPorConductor(BigDecimal.valueOf(promedioVehiculosPorConductor)
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .doubleValue())
+                .porcentajeConductoresActivos(BigDecimal.valueOf(porcentajeConductoresActivos)
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .doubleValue())
+                .porcentajeVehiculosActivos(BigDecimal.valueOf(porcentajeVehiculosActivos)
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .doubleValue())
+                .porcentajePedidosEntregados(BigDecimal.valueOf(porcentajePedidosEntregados)
                         .setScale(2, RoundingMode.HALF_UP)
                         .doubleValue())
                 .build();

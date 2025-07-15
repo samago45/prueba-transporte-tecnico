@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,6 +51,7 @@ class AsignacionServiceTest {
         conductor.setNombre("Juan Pérez");
         conductor.setLicencia("A12345");
         conductor.setActivo(true);
+        conductor.setVehiculos(new ArrayList<>());
 
         vehiculo = new Vehiculo();
         vehiculo.setId(1L);
