@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,7 +44,7 @@ class UsuarioDomainServiceTest {
         usuario.setUsername("testuser");
         usuario.setEmail("test@example.com");
         usuario.setPassword("password123");
-        usuario.setRol(Rol.USER);
+        usuario.setRoles(List.of(Rol.CLIENTE));
         usuario.setActivo(true);
     }
 

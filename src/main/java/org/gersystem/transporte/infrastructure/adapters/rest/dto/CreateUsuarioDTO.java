@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.gersystem.transporte.domain.model.Rol;
+import java.util.List;
 
 @Data
 public class CreateUsuarioDTO {
@@ -18,6 +19,9 @@ public class CreateUsuarioDTO {
     @NotBlank(message = "La contraseña es requerida")
     private String password;
 
-    @NotNull(message = "El rol es requerido")
-    private Rol rol;
+    @NotBlank(message = "El nombre es requerido")
+    private String nombre;
+
+    @NotNull(message = "Los roles son requeridos")
+    private List<Rol> roles;
 } 
