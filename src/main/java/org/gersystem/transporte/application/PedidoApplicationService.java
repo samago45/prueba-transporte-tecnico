@@ -1,17 +1,17 @@
 package org.gersystem.transporte.application;
 
-import org.gersystem.transporte.domain.model.Conductor;
+import jakarta.persistence.EntityNotFoundException;
 import org.gersystem.transporte.domain.model.EstadoPedido;
 import org.gersystem.transporte.domain.model.Pedido;
-import org.gersystem.transporte.domain.model.Vehiculo;
-import org.gersystem.transporte.domain.repository.ConductorRepository;
 import org.gersystem.transporte.domain.repository.PedidoRepository;
-import org.gersystem.transporte.domain.repository.VehiculoRepository;
 import org.gersystem.transporte.domain.service.PedidoDomainService;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.CreatePedidoDTO;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.PedidoDTO;
-import org.gersystem.transporte.infrastructure.adapters.rest.exception.ResourceNotFoundException;
 import org.gersystem.transporte.infrastructure.adapters.rest.mapper.PedidoMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,54 +19,53 @@ import org.springframework.transaction.annotation.Transactional;
 public class PedidoApplicationService {
 
     private final PedidoRepository pedidoRepository;
-    private final VehiculoRepository vehiculoRepository;
-    private final ConductorRepository conductorRepository;
     private final PedidoDomainService pedidoDomainService;
     private final PedidoMapper pedidoMapper;
 
     public PedidoApplicationService(PedidoRepository pedidoRepository,
-                                    VehiculoRepository vehiculoRepository,
-                                    ConductorRepository conductorRepository,
-                                    PedidoDomainService pedidoDomainService,
-                                    PedidoMapper pedidoMapper) {
+                                  PedidoDomainService pedidoDomainService,
+                                  PedidoMapper pedidoMapper) {
         this.pedidoRepository = pedidoRepository;
-        this.vehiculoRepository = vehiculoRepository;
-        this.conductorRepository = conductorRepository;
         this.pedidoDomainService = pedidoDomainService;
         this.pedidoMapper = pedidoMapper;
     }
 
     @Transactional
-    public PedidoDTO registrarPedido(CreatePedidoDTO createPedidoDTO) {
-        Vehiculo vehiculo = vehiculoRepository.findById(createPedidoDTO.getVehiculoId())
-                .orElseThrow(() -> new ResourceNotFoundException("Vehículo no encontrado con id: " + createPedidoDTO.getVehiculoId()));
-        
-        Conductor conductor = conductorRepository.findById(createPedidoDTO.getConductorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Conductor no encontrado con id: " + createPedidoDTO.getConductorId()));
-
+    @CacheEvict(value = {"pedidos", "pedidosPorEstado", "pedidosPorConductor"}, allEntries = true)
+    public PedidoDTO crearPedido(CreatePedidoDTO createPedidoDTO, Long vehiculoId) {
         Pedido pedido = pedidoMapper.toEntity(createPedidoDTO);
-        
-        pedidoDomainService.validarConductorActivo(conductor);
-        pedidoDomainService.validarCapacidadVehiculo(vehiculo, pedido);
-
-        pedido.setVehiculo(vehiculo);
-        pedido.setConductor(conductor);
-        pedido.setEstado(EstadoPedido.PENDIENTE);
-        
-        Pedido nuevoPedido = pedidoRepository.save(pedido);
-        return pedidoMapper.toDto(nuevoPedido);
+        Pedido pedidoCreado = pedidoDomainService.crearPedido(pedido, vehiculoId);
+        return pedidoMapper.toDto(pedidoCreado);
     }
 
     @Transactional
-    public PedidoDTO actualizarEstadoPedido(Long pedidoId, EstadoPedido nuevoEstado) {
-        Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con id: " + pedidoId));
-        
-        // Aquí se podría añadir lógica de negocio sobre la transición de estados
-        // (ej. no se puede pasar de COMPLETADO a EN_PROGRESO)
-        
-        pedido.setEstado(nuevoEstado);
-        Pedido pedidoActualizado = pedidoRepository.save(pedido);
+    @CacheEvict(value = {"pedidos", "pedidosPorEstado", "pedidosPorConductor"}, allEntries = true)
+    public PedidoDTO actualizarEstado(Long id, EstadoPedido nuevoEstado) {
+        Pedido pedidoActualizado = pedidoDomainService.actualizarEstadoPedido(id, nuevoEstado);
         return pedidoMapper.toDto(pedidoActualizado);
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(value = "pedidos", key = "#id")
+    public PedidoDTO obtenerPedido(Long id) {
+        return pedidoRepository.findById(id)
+                .map(pedidoMapper::toDto)
+                .orElseThrow(() -> new EntityNotFoundException("Pedido no encontrado"));
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(value = "pedidosPorEstado", key = "{#estado?.name(), #conductorId, #pageable.pageNumber, #pageable.pageSize}")
+    public Page<PedidoDTO> listarPedidos(EstadoPedido estado, Long conductorId, Pageable pageable) {
+        Page<Pedido> pedidos;
+        
+        if (estado != null) {
+            pedidos = pedidoRepository.findByEstado(estado, pageable);
+        } else if (conductorId != null) {
+            pedidos = pedidoRepository.findByConductorId(conductorId, pageable);
+        } else {
+            pedidos = pedidoRepository.findAll(pageable);
+        }
+        
+        return pedidos.map(pedidoMapper::toDto);
     }
 } 

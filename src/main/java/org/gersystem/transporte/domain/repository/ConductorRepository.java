@@ -18,6 +18,6 @@ public interface ConductorRepository extends JpaRepository<Conductor, Long>, Jpa
     @Query("SELECT new org.gersystem.transporte.infrastructure.adapters.rest.dto.ConteoVehiculosDTO(c.id, c.nombre, size(c.vehiculos)) FROM Conductor c WHERE c.activo = true")
     List<ConteoVehiculosDTO> countVehiculosByConductor();
 
-    @Query("SELECT COUNT(v.id) FROM Conductor c JOIN c.vehiculos v WHERE c.id = :conductorId")
+    @Query("SELECT COUNT(v) FROM Vehiculo v WHERE v.conductor.id = :conductorId AND v.activo = true")
     Integer contarVehiculosAsignados(@Param("conductorId") Long conductorId);
 } 

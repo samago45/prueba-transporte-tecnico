@@ -14,4 +14,4 @@ public interface VehiculoRepository extends JpaRepository<Vehiculo, Long>, JpaSp
     List<Vehiculo> findVehiculosLibres();
 
     boolean existsByPlaca(String placa);
-}
+} 

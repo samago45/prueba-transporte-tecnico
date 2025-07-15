@@ -49,10 +49,10 @@ public class ConductorApplicationService {
     @Transactional(readOnly = true)
     public PageDTO<ConductorDTO> obtenerTodosLosConductores(String nombre, Boolean activo, Pageable pageable) {
         Specification<Conductor> spec = Specification.where(conductorSpecification.nombreContains(nombre))
-                .and(conductorSpecification.esActivo(activo));
+                                                     .and(conductorSpecification.esActivo(activo));
 
         Page<ConductorDTO> dtoPage = conductorRepository.findAll(spec, pageable)
-                .map(conductorMapper::toDto);
+                                  .map(conductorMapper::toDto);
         return new PageDTO<>(dtoPage);
     }
 

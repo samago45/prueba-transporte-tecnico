@@ -55,7 +55,7 @@ public class VehiculoApplicationService {
 
     public PageDTO<VehiculoDTO> obtenerTodosLosVehiculos(String placa, Boolean activo, Pageable pageable) {
         Specification<Vehiculo> spec = Specification.where(vehiculoSpecification.placaContains(placa))
-                .and(vehiculoSpecification.esActivo(activo));
+                                                    .and(vehiculoSpecification.esActivo(activo));
         Page<VehiculoDTO> dtoPage = vehiculoRepository.findAll(spec, pageable).map(vehiculoMapper::toDto);
         return new PageDTO<>(dtoPage);
     }

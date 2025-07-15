@@ -1,6 +1,9 @@
 package org.gersystem.transporte.domain.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,18 +14,22 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pedido {
+public class Pedido extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "La descripción es requerida")
     private String descripcion;
 
+    @NotNull(message = "El peso es requerido")
+    @Positive(message = "El peso debe ser mayor a 0")
     private BigDecimal peso;
 
+    @NotNull(message = "El estado es requerido")
     @Enumerated(EnumType.STRING)
-    private EstadoPedido estado;
+    private EstadoPedido estado = EstadoPedido.PENDIENTE;
 
     @ManyToOne
     @JoinColumn(name = "vehiculo_id")

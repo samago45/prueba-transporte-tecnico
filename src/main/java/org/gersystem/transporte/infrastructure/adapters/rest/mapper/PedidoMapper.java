@@ -8,10 +8,12 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {VehiculoMapper.class, ConductorMapper.class})
 public interface PedidoMapper {
-
-    PedidoDTO toDto(Pedido pedido);
-
-    @Mapping(source = "vehiculoId", target = "vehiculo.id")
-    @Mapping(source = "conductorId", target = "conductor.id")
+    
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "estado", ignore = true)
+    @Mapping(target = "vehiculo", ignore = true)
+    @Mapping(target = "conductor", ignore = true)
     Pedido toEntity(CreatePedidoDTO createPedidoDTO);
+    
+    PedidoDTO toDto(Pedido pedido);
 } 
