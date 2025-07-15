@@ -21,10 +21,22 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.gersystem.transporte.infrastructure.adapters.rest.exception.ValidationException;
+import org.gersystem.transporte.infrastructure.adapters.rest.dto.ErrorResponseDTO;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@Tag(name = "Autenticación", description = "API para autenticación y gestión de usuarios")
+@Tag(name = "Autenticación", description = """
+    API para la gestión de autenticación y usuarios. Permite:
+    - Registro de nuevos usuarios
+    - Inicio de sesión con JWT
+    - Renovación de tokens
+    - Cierre de sesión
+    - Gestión de usuarios existentes
+    """)
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -43,20 +55,34 @@ public class AuthController {
     }
 
     @GetMapping("/usuarios")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "Listar usuarios",
-        description = "Obtiene la lista de todos los usuarios registrados",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Lista de usuarios obtenida exitosamente",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = UsuarioDTO.class)
-                )
-            )
-        }
+        description = """
+            Obtiene la lista de todos los usuarios registrados en el sistema.
+            Solo accesible para administradores.
+            
+            La información sensible como contraseñas no se incluye en la respuesta.
+            """
     )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Lista de usuarios obtenida exitosamente",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = UsuarioDTO.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "No tiene permisos para listar usuarios",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponseDTO.class)
+            )
+        )
+    })
     public ResponseEntity<List<UsuarioDTO>> listarUsuarios() {
         List<Usuario> usuarios = usuarioDomainService.listarUsuarios();
         List<UsuarioDTO> usuariosDTO = usuarios.stream()
@@ -68,27 +94,44 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(
         summary = "Iniciar sesión",
-        description = "Autentica un usuario usando username/email y contraseña, devuelve tokens JWT",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Autenticación exitosa",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = JwtAuthenticationResponseDTO.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "401",
-                description = "Credenciales inválidas",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorResponseDTO.class)
-                )
-            )
-        }
+        description = """
+            Autentica un usuario usando username/email y contraseña.
+            Retorna tokens JWT para acceso y renovación.
+            
+            El token de acceso debe incluirse en el header Authorization de las siguientes peticiones:
+            Authorization: Bearer {access_token}
+            
+            El token de renovación se usa solo para obtener un nuevo token de acceso cuando este expire.
+            """
     )
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Autenticación exitosa",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = JwtAuthenticationResponseDTO.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Credenciales inválidas",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponseDTO.class)
+            )
+        )
+    })
+    public ResponseEntity<?> login(
+            @Parameter(
+                description = """
+                    Credenciales de usuario.
+                    Se puede usar tanto el nombre de usuario como el email para iniciar sesión.
+                    """,
+                required = true,
+                schema = @Schema(implementation = LoginRequestDTO.class)
+            )
+            @Valid @RequestBody LoginRequestDTO loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(), loginRequest.getPassword())
@@ -100,65 +143,152 @@ public class AuthController {
 
             return ResponseEntity.ok(new JwtAuthenticationResponseDTO(accessToken, refreshToken));
         } catch (BadCredentialsException e) {
-            ErrorResponseDTO errorResponse = new ErrorResponseDTO("Credenciales inválidas", "Las credenciales proporcionadas son incorrectas");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+            throw new ValidationException("Credenciales inválidas");
         } catch (Exception e) {
-            ErrorResponseDTO errorResponse = new ErrorResponseDTO("Error de autenticación", "Ha ocurrido un error durante la autenticación");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+            throw new ValidationException("Error durante la autenticación");
         }
     }
 
     @PostMapping("/register")
     @Operation(
         summary = "Registrar usuario",
-        description = "Crea una nueva cuenta de usuario",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Usuario registrado exitosamente",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = UsuarioDTO.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "400",
-                description = "Datos de entrada inválidos",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorResponseDTO.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "409",
-                description = "El email o nombre de usuario ya está registrado",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorResponseDTO.class)
-                )
-            )
-        }
+        description = """
+            Crea una nueva cuenta de usuario en el sistema.
+            
+            Validaciones:
+            - El email debe ser único y tener un formato válido
+            - El nombre de usuario debe ser único
+            - La contraseña debe cumplir los requisitos mínimos de seguridad
+            - Los roles asignados deben ser válidos
+            """
     )
-    public ResponseEntity<UsuarioDTO> register(@Valid @RequestBody CreateUsuarioDTO createUsuarioDTO) {
-        Usuario usuario = usuarioMapper.toEntity(createUsuarioDTO);
-        Usuario usuarioCreado = usuarioDomainService.crearUsuario(usuario);
-        return ResponseEntity.ok(usuarioMapper.toDto(usuarioCreado));
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Usuario registrado exitosamente",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = UsuarioDTO.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos de entrada inválidos",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponseDTO.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "El email o nombre de usuario ya está registrado",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponseDTO.class)
+            )
+        )
+    })
+    public ResponseEntity<UsuarioDTO> register(
+            @Parameter(
+                description = "Datos del nuevo usuario",
+                required = true,
+                schema = @Schema(implementation = CreateUsuarioDTO.class)
+            )
+            @Valid @RequestBody CreateUsuarioDTO createUsuarioDTO) {
+        try {
+            Usuario usuario = usuarioMapper.toEntity(createUsuarioDTO);
+            Usuario usuarioCreado = usuarioDomainService.crearUsuario(usuario);
+            return ResponseEntity.ok(usuarioMapper.toDto(usuarioCreado));
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Error en los datos del usuario: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            throw new ValidationException("No se puede crear el usuario: " + e.getMessage());
+        }
     }
 
     @PostMapping("/refresh-token")
-    @Operation(summary = "Refrescar token", description = "Genera un nuevo access token usando el refresh token")
-    public ResponseEntity<JwtAuthenticationResponseDTO> refreshToken(@Valid @RequestBody RefreshTokenRequestDTO request) {
-        Usuario usuario = usuarioDomainService.validarRefreshToken(request.getRefreshToken());
-        String accessToken = jwtTokenProvider.generateToken(usuario);
-        String newRefreshToken = usuarioDomainService.generarRefreshToken(usuario);
+    @Operation(
+        summary = "Refrescar token",
+        description = """
+            Genera un nuevo token de acceso usando el token de renovación.
+            
+            Este endpoint debe usarse cuando el token de acceso ha expirado.
+            El token de renovación debe ser válido y no estar revocado.
+            Se genera un nuevo par de tokens (acceso y renovación).
+            """
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Tokens renovados exitosamente",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = JwtAuthenticationResponseDTO.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Token de renovación inválido o expirado",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponseDTO.class)
+            )
+        )
+    })
+    public ResponseEntity<JwtAuthenticationResponseDTO> refreshToken(
+            @Parameter(
+                description = "Token de renovación actual",
+                required = true,
+                schema = @Schema(implementation = RefreshTokenRequestDTO.class)
+            )
+            @Valid @RequestBody RefreshTokenRequestDTO request) {
+        try {
+            Usuario usuario = usuarioDomainService.validarRefreshToken(request.getRefreshToken());
+            String accessToken = jwtTokenProvider.generateToken(usuario);
+            String newRefreshToken = usuarioDomainService.generarRefreshToken(usuario);
 
-        return ResponseEntity.ok(new JwtAuthenticationResponseDTO(accessToken, newRefreshToken));
+            return ResponseEntity.ok(new JwtAuthenticationResponseDTO(accessToken, newRefreshToken));
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Token de renovación inválido");
+        }
     }
 
     @PostMapping("/logout")
-    @Operation(summary = "Cerrar sesión", description = "Revoca el refresh token del usuario")
-    public ResponseEntity<Void> logout(@Valid @RequestBody RefreshTokenRequestDTO request) {
-        usuarioDomainService.revocarRefreshToken(request.getRefreshToken());
-        return ResponseEntity.ok().build();
+    @Operation(
+        summary = "Cerrar sesión",
+        description = """
+            Revoca el token de renovación del usuario.
+            
+            Esto invalida la sesión actual y fuerza al usuario a iniciar sesión nuevamente.
+            El token de acceso actual seguirá siendo válido hasta su expiración.
+            """
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Sesión cerrada exitosamente"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Token de renovación inválido",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponseDTO.class)
+            )
+        )
+    })
+    public ResponseEntity<Void> logout(
+            @Parameter(
+                description = "Token de renovación a revocar",
+                required = true,
+                schema = @Schema(implementation = RefreshTokenRequestDTO.class)
+            )
+            @Valid @RequestBody RefreshTokenRequestDTO request) {
+        try {
+            usuarioDomainService.revocarRefreshToken(request.getRefreshToken());
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Token de renovación inválido");
+        }
     }
 } 
