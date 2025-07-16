@@ -1,13 +1,14 @@
 package org.gersystem.transporte.infrastructure.security;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
 import org.gersystem.transporte.domain.model.Usuario;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -19,10 +20,11 @@ public class JwtTokenProvider {
     private final long tokenValidityInMilliseconds;
 
     public JwtTokenProvider(
-            @Value("${jwt.token-validity-in-seconds:86400}") long tokenValidityInSeconds) {
-        // Generamos una clave segura para HS512
-        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-        this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+            @Value("${jwt.secret}") String jwtSecret,
+            @Value("${jwt.expiration}") long tokenValidityInMilliseconds) {
+        // Usar la clave secreta configurada en lugar de generar una nueva
+        this.key = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), SignatureAlgorithm.HS512.getJcaName());
+        this.tokenValidityInMilliseconds = tokenValidityInMilliseconds;
     }
 
     public String generateToken(Authentication authentication) {
@@ -40,7 +42,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setSubject(usuario.getUsername())
-                .claim("auth", authorities)  // Ya incluye el prefijo ROLE_ desde getAuthorities()
+                .claim("auth", authorities)
                 .claim("userId", usuario.getId())
                 .setIssuedAt(now)
                 .setExpiration(validity)

@@ -1,0 +1,58 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Sistema de Transporte - Dashboard",
+    "tags": ["transporte", "monitoring"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Pedidos por Hora",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(transporte_pedidos_total[5m])",
+            "legendFormat": "Pedidos/hora"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "displayMode": "list"
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Vehículos Disponibles",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "transporte_vehiculos_disponibles",
+            "legendFormat": "Disponibles"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Tiempo de Respuesta API",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(http_server_requests_seconds_sum[5m]) / rate(http_server_requests_seconds_count[5m])",
+            "legendFormat": "Tiempo promedio"
+          }
+        ]
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "30s"
+  }
+} 

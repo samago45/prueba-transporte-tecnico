@@ -1,6 +1,6 @@
 package org.gersystem.transporte.infrastructure.adapters.rest.dto;
 
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.gersystem.transporte.domain.model.TipoMantenimiento;
 
