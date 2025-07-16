@@ -2,60 +2,32 @@
   "dashboard": {
     "id": null,
     "title": "Sistema de Transporte - Dashboard",
-    "tags": ["transporte", "spring-boot"],
-    "style": "dark",
+    "tags": ["transporte", "monitoring"],
     "timezone": "browser",
     "panels": [
       {
         "id": 1,
-        "title": "HTTP Requests por Segundo",
-        "type": "graph",
-        "targets": [
-          {
-            "expr": "rate(http_server_requests_seconds_count[5m])",
-            "legendFormat": "{{method}} {{uri}}"
-          }
-        ],
-        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
-      },
-      {
-        "id": 2,
-        "title": "Response Time Promedio",
-        "type": "graph",
-        "targets": [
-          {
-            "expr": "rate(http_server_requests_seconds_sum[5m]) / rate(http_server_requests_seconds_count[5m])",
-            "legendFormat": "{{method}} {{uri}}"
-          }
-        ],
-        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
-      },
-      {
-        "id": 3,
-        "title": "Error Rate",
-        "type": "graph",
-        "targets": [
-          {
-            "expr": "rate(http_server_requests_seconds_count{status=~\"4..|5..\"}[5m]) / rate(http_server_requests_seconds_count[5m])",
-            "legendFormat": "Error Rate"
-          }
-        ],
-        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
-      },
-      {
-        "id": 4,
         "title": "Pedidos por Hora",
         "type": "stat",
         "targets": [
           {
-            "expr": "transporte_pedidos_por_hora_total",
-            "legendFormat": "Pedidos"
+            "expr": "rate(transporte_pedidos_total[5m])",
+            "legendFormat": "Pedidos/hora"
           }
         ],
-        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 8}
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "displayMode": "list"
+            }
+          }
+        }
       },
       {
-        "id": 5,
+        "id": 2,
         "title": "Vehículos Disponibles",
         "type": "stat",
         "targets": [
@@ -63,42 +35,24 @@
             "expr": "transporte_vehiculos_disponibles",
             "legendFormat": "Disponibles"
           }
-        ],
-        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 8}
+        ]
       },
       {
-        "id": 6,
-        "title": "JVM Memory Usage",
+        "id": 3,
+        "title": "Tiempo de Respuesta API",
         "type": "graph",
         "targets": [
           {
-            "expr": "jvm_memory_used_bytes{area=\"heap\"}",
-            "legendFormat": "Heap Used"
-          },
-          {
-            "expr": "jvm_memory_max_bytes{area=\"heap\"}",
-            "legendFormat": "Heap Max"
+            "expr": "rate(http_server_requests_seconds_sum[5m]) / rate(http_server_requests_seconds_count[5m])",
+            "legendFormat": "Tiempo promedio"
           }
-        ],
-        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
-      },
-      {
-        "id": 7,
-        "title": "CPU Usage",
-        "type": "graph",
-        "targets": [
-          {
-            "expr": "rate(process_cpu_usage[5m]) * 100",
-            "legendFormat": "CPU %"
-          }
-        ],
-        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+        ]
       }
     ],
     "time": {
       "from": "now-1h",
       "to": "now"
     },
-    "refresh": "10s"
+    "refresh": "30s"
   }
 } 

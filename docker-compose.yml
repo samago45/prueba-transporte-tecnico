@@ -93,10 +93,49 @@ services:
       - "9000:9000"
     environment:
       - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+      - SONAR_WEB_JAVAOPTS=-Xmx512m -Xms128m
     volumes:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_logs:/opt/sonarqube/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/api/system/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    depends_on:
+      - transporte-app
+
+  # Servicio para análisis automático
+  sonar-scanner:
+    image: sonarqube-scanner:latest
+    container_name: sonar-scanner
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    environment:
+      - SONAR_HOST_URL=http://sonarqube:9000
+      - SONAR_LOGIN=admin
+      - SONAR_PASSWORD=admin
+    command: >
+      sh -c "
+        echo 'Esperando que SonarQube esté listo...' &&
+        while ! curl -f http://sonarqube:9000/api/system/status; do
+          sleep 10
+        done &&
+        echo 'SonarQube listo, iniciando análisis...' &&
+        mvn clean verify sonar:sonar
+          -Dsonar.host.url=http://sonarqube:9000
+          -Dsonar.login=admin
+          -Dsonar.password=admin
+          -Dsonar.projectKey=transporte
+          -Dsonar.projectName='Sistema de Transporte'
+      "
+    depends_on:
+      sonarqube:
+        condition: service_healthy
+    profiles: ["analysis"]  # Solo se ejecuta cuando se especifica
 
   prometheus:
     image: prom/prometheus:latest
@@ -109,10 +148,7 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--storage.tsdb.retention.time=200h'
-      - '--web.enable-lifecycle'
+    restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
@@ -121,10 +157,46 @@ services:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+  # Análisis automático después de que la app esté lista
+  auto-sonar-analysis:
+    build: .
+    container_name: auto-sonar-analysis
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - SONAR_HOST_URL=http://sonarqube:9000
+      - SONAR_LOGIN=admin
+      - SONAR_PASSWORD=admin
+    command: >
+      sh -c "
+        echo 'Esperando que SonarQube esté listo...' &&
+        while ! curl -f http://sonarqube:9000/api/system/status; do
+          sleep 10
+        done &&
+        echo 'SonarQube listo, iniciando análisis automático...' &&
+        mvn clean verify sonar:sonar
+          -Dsonar.host.url=http://sonarqube:9000
+          -Dsonar.login=admin
+          -Dsonar.password=admin
+          -Dsonar.projectKey=transporte
+          -Dsonar.projectName='Sistema de Transporte'
+      "
+    depends_on:
+      sonarqube:
+        condition: service_healthy
+      transporte-app:
+        condition: service_healthy
+    restart: "no"  # Solo se ejecuta una vez
 
 volumes:
   mysql-data:
