@@ -44,10 +44,8 @@ services:
       JWT_SECRET: ${JWT_SECRET:-404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
       
-      # Configuración de Migraciones
-      SPRING_FLYWAY_ENABLED: "true"
-      SPRING_FLYWAY_LOCATIONS: classpath:db/migration
-      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+      # Configuración de Migraciones - DESHABILITADO
+      SPRING_FLYWAY_ENABLED: "false"
       
       # Configuración de Swagger
       SPRINGDOC_SWAGGER_UI_ENABLED: "true"

@@ -26,11 +26,16 @@ import org.gersystem.transporte.infrastructure.adapters.rest.dto.ErrorResponseDT
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @Tag(name = "Autenticación", description = "API para la gestión de autenticación y usuarios. Permite registro de nuevos usuarios, inicio de sesión con JWT, renovación de tokens, cierre de sesión y gestión de usuarios existentes.")
 public class AuthController {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
@@ -82,7 +87,7 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(
         summary = "Iniciar sesión",
-        description = "Autentica un usuario usando username/email y contraseña. Retorna tokens JWT para acceso y renovación. El token de acceso debe incluirse en el header Authorization de las siguientes peticiones: Authorization: Bearer {access_token}. El token de renovación se usa solo para obtener un nuevo token de acceso cuando este expire."
+        description = "Autentica un usuario usando username/email y contraseña. Retorna tokens JWT para acceso y renovación."
     )
     @ApiResponses({
         @ApiResponse(
@@ -110,19 +115,26 @@ public class AuthController {
             )
             @Valid @RequestBody LoginRequestDTO loginRequest) {
         try {
+            log.debug("Intentando autenticar usuario: {}", loginRequest.getUsernameOrEmail());
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(), loginRequest.getPassword())
             );
 
             Usuario usuario = (Usuario) authentication.getPrincipal();
+            log.debug("Usuario autenticado exitosamente: {}", usuario.getUsername());
             String accessToken = jwtTokenProvider.generateToken(usuario);
             String refreshToken = usuarioDomainService.generarRefreshToken(usuario);
 
             return ResponseEntity.ok(new JwtAuthenticationResponseDTO(accessToken, refreshToken));
         } catch (BadCredentialsException e) {
+            log.warn("Credenciales inválidas para usuario: {}", loginRequest.getUsernameOrEmail());
             throw new ValidationException("Credenciales inválidas");
+        } catch (UsernameNotFoundException e) {
+            log.warn("Usuario no encontrado: {}", loginRequest.getUsernameOrEmail());
+            throw new ValidationException("Usuario no encontrado");
         } catch (Exception e) {
-            throw new ValidationException("Error durante la autenticación");
+            log.error("Error durante la autenticación para usuario {}: {}", loginRequest.getUsernameOrEmail(), e.getMessage(), e);
+            throw new ValidationException("Error durante la autenticación: " + e.getMessage());
         }
     }
 

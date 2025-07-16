@@ -1,22 +1,18 @@
--- Insertar un usuario administrador con contraseña 'password' hasheada con BCrypt
--- El hash corresponde a la contraseña "password"
-INSERT INTO usuario (username, password, nombre, email, activo) 
-VALUES ('admin', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqR2e5RzTTNhrnmLTYx.b4BOswOK', 'Administrador', 'admin@example.com', true) 
-ON DUPLICATE KEY UPDATE 
-    password = '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqR2e5RzTTNhrnmLTYx.b4BOswOK',
+-- Insertar usuario administrador por defecto
+-- Contraseña: 'admin123' (hasheada con BCrypt)
+INSERT INTO usuario (username, password, nombre, email, activo, created_by, created_date, last_modified_by, last_modified_date)
+VALUES ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa', 'Administrador', 'admin@transporte.com', true, 'SYSTEM', NOW(), 'SYSTEM', NOW())
+ON DUPLICATE KEY UPDATE
+    password = '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa',
     nombre = 'Administrador',
-    email = 'admin@example.com',
-    activo = true;
+    email = 'admin@transporte.com',
+    activo = true,
+    last_modified_by = 'SYSTEM',
+    last_modified_date = NOW();
 
--- Asignar el rol de ADMIN al usuario 'admin'
--- Usar una subconsulta directa para evitar problemas con variables
+-- Asignar rol ADMIN al usuario administrador
 INSERT INTO usuario_rol (usuario_id, roles)
-SELECT id, 'ADMIN' 
-FROM usuario 
-WHERE username = 'admin'
+SELECT id, 'ADMIN' FROM usuario WHERE username = 'admin'
 AND NOT EXISTS (
-    SELECT 1 
-    FROM usuario_rol ur 
-    WHERE ur.usuario_id = usuario.id 
-    AND ur.roles = 'ADMIN'
+    SELECT 1 FROM usuario_rol ur WHERE ur.usuario_id = usuario.id AND ur.roles = 'ADMIN'
 ); 

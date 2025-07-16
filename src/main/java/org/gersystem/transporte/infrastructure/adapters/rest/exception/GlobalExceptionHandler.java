@@ -19,7 +19,10 @@ import org.springframework.data.mapping.PropertyReferenceException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -27,24 +30,60 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidationException(ValidationException ex, WebRequest request) {
-        log.warn("Validation error: {}", ex.getMessage());
-        
         ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error("Validation Error")
-                .code(ex.getCode())
+                .error("Bad Request")
                 .message(ex.getMessage())
-                .path(request.getDescription(false).replace("uri=", ""))
+                .code("VALIDATION_ERROR")
+                .path(((ServletWebRequest) request).getRequest().getRequestURI())
                 .build();
+        
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
 
-        if (ex.getField() != null) {
-            Map<String, String> validationErrors = new HashMap<>();
-            validationErrors.put(ex.getField(), ex.getMessage());
-            errorResponse.setValidationErrors(validationErrors);
-        }
+    @ExceptionHandler(org.gersystem.transporte.infrastructure.adapters.rest.exception.ValidationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleCustomValidationException(
+            org.gersystem.transporte.infrastructure.adapters.rest.exception.ValidationException ex, 
+            WebRequest request) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("Unauthorized")
+                .message(ex.getMessage())
+                .code("AUTHENTICATION_ERROR")
+                .path(((ServletWebRequest) request).getRequest().getRequestURI())
+                .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponseDTO> handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.UNAUTHORIZED.value())
+            .error("Unauthorized")
+            .message("Credenciales inválidas")
+            .code("AUTHENTICATION_ERROR")
+            .path(((ServletWebRequest) request).getRequest().getRequestURI())
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUsernameNotFoundException(UsernameNotFoundException ex, WebRequest request) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.UNAUTHORIZED.value())
+            .error("Unauthorized")
+            .message("Usuario no encontrado")
+            .code("AUTHENTICATION_ERROR")
+            .path(((ServletWebRequest) request).getRequest().getRequestURI())
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(BusinessException.class)
