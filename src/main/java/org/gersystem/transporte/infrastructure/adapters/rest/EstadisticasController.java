@@ -37,22 +37,7 @@ public class EstadisticasController {
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = EstadisticasDomainService.EstadisticasGenerales.class),
-                examples = @ExampleObject(value = """
-                    {
-                        "totalConductores": 50,
-                        "conductoresActivos": 45,
-                        "totalVehiculos": 40,
-                        "vehiculosActivos": 35,
-                        "totalPedidos": 1000,
-                        "pedidosEnProceso": 150,
-                        "pedidosEntregados": 850,
-                        "pesoTotalTransportado": 25000.5,
-                        "promedioVehiculosPorConductor": 0.8,
-                        "porcentajeConductoresActivos": 90.0,
-                        "porcentajeVehiculosActivos": 87.5,
-                        "porcentajePedidosEntregados": 85.0
-                    }
-                    """)
+                examples = @ExampleObject(value = "{\"totalConductores\": 50,\"conductoresActivos\": 45,\"totalVehiculos\": 40,\"vehiculosActivos\": 35,\"totalPedidos\": 1000,\"pedidosEnProceso\": 150,\"pedidosEntregados\": 850,\"pesoTotalTransportado\": 25000.5,\"promedioVehiculosPorConductor\": 0.8,\"porcentajeConductoresActivos\": 90.0,\"porcentajeVehiculosActivos\": 87.5,\"porcentajePedidosEntregados\": 85.0}")
             )
         ),
         @ApiResponse(
@@ -82,18 +67,7 @@ public class EstadisticasController {
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = EstadisticasDomainService.EstadisticasConductor.class),
-                examples = @ExampleObject(value = """
-                    {
-                        "totalPedidosAsignados": 120,
-                        "pedidosEntregados": 100,
-                        "pedidosEnProceso": 20,
-                        "kilometrosRecorridos": 5000.5,
-                        "pesoTotalTransportado": 15000.75,
-                        "promedioTiempoEntrega": 45.5,
-                        "calificacionPromedio": 4.8,
-                        "vehiculosAsignados": 2
-                    }
-                    """)
+                examples = @ExampleObject(value = "{\"totalPedidosAsignados\": 120,\"pedidosEntregados\": 100,\"pedidosEnProceso\": 20,\"kilometrosRecorridos\": 5000.5,\"pesoTotalTransportado\": 15000.75,\"promedioTiempoEntrega\": 45.5,\"calificacionPromedio\": 4.8,\"vehiculosAsignados\": 2}")
             )
         ),
         @ApiResponse(

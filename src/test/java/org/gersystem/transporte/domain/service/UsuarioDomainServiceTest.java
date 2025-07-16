@@ -1,6 +1,6 @@
 package org.gersystem.transporte.domain.service;
 
-import jakarta.persistence.EntityNotFoundException;
+import javax.persistence.EntityNotFoundException;
 import org.gersystem.transporte.domain.model.Rol;
 import org.gersystem.transporte.domain.model.Usuario;
 import org.gersystem.transporte.domain.repository.UsuarioRepository;

@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ValidationException;
+import javax.persistence.EntityNotFoundException;
+import javax.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

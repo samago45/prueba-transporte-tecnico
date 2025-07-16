@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.gersystem.transporte.application.exception.ValidationException;
 import org.gersystem.transporte.domain.model.Ruta;
@@ -47,19 +47,7 @@ public class RutaController {
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = RutaDTO.class),
-                examples = @ExampleObject(value = """
-                    {
-                        "id": 1,
-                        "nombre": "Ruta Norte-Sur",
-                        "origen": "Terminal Norte",
-                        "destino": "Terminal Sur",
-                        "distanciaKm": 25.5,
-                        "tiempoEstimadoMinutos": 45,
-                        "activa": false,
-                        "fechaCreacion": "2024-03-20T10:30:00",
-                        "ultimaModificacion": "2024-03-20T10:30:00"
-                    }
-                    """)
+                examples = @ExampleObject(value = "{\"id\": 1,\"nombre\": \"Ruta Norte-Sur\",\"origen\": \"Terminal Norte\",\"destino\": \"Terminal Sur\",\"distanciaKm\": 25.5,\"tiempoEstimadoMinutos\": 45,\"activa\": false,\"fechaCreacion\": \"2024-03-20T10:30:00\",\"ultimaModificacion\": \"2024-03-20T10:30:00\"}")
             )
         ),
         @ApiResponse(

@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.EntityNotFoundException;
+import javax.persistence.EntityNotFoundException;
 import org.gersystem.transporte.application.AsignacionService;
 import org.gersystem.transporte.application.exception.BusinessException;
 import org.gersystem.transporte.application.exception.ValidationException;
@@ -19,12 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/asignaciones")
-@Tag(name = "Asignaciones", description = """
-    API para gestionar la asignación de vehículos a conductores. Permite:
-    - Asignar un vehículo a un conductor
-    - Desasignar un vehículo de su conductor actual
-    - Validación automática de reglas de negocio (límites, disponibilidad)
-    """)
+@Tag(name = "Asignaciones", description = "API para gestionar la asignación de vehículos a conductores. Permite asignar un vehículo a un conductor, desasignar un vehículo de su conductor actual y validación automática de reglas de negocio (límites, disponibilidad).")
 public class AsignacionController {
 
     private final AsignacionService asignacionService;
@@ -37,17 +32,7 @@ public class AsignacionController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "Asignar un vehículo a un conductor",
-        description = """
-            Asigna un vehículo específico a un conductor.
-            
-            Reglas de negocio:
-            - El conductor debe estar activo
-            - El vehículo debe estar activo y disponible
-            - El conductor no debe exceder su límite de vehículos asignados
-            - El vehículo no debe estar ya asignado a otro conductor
-            
-            La asignación es exclusiva: un vehículo solo puede estar asignado a un conductor a la vez.
-            """
+        description = "Asigna un vehículo específico a un conductor. Reglas de negocio: El conductor debe estar activo, el vehículo debe estar activo y disponible, el conductor no debe exceder su límite de vehículos asignados, el vehículo no debe estar ya asignado a otro conductor. La asignación es exclusiva: un vehículo solo puede estar asignado a un conductor a la vez."
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -98,14 +83,7 @@ public class AsignacionController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "Desasignar un vehículo de su conductor actual",
-        description = """
-            Elimina la asignación actual de un vehículo, dejándolo disponible para ser asignado a otro conductor.
-            
-            Consideraciones:
-            - El vehículo debe estar actualmente asignado a un conductor
-            - Se registrará la fecha de desasignación
-            - Se actualizará el historial de asignaciones
-            """
+        description = "Elimina la asignación actual de un vehículo, dejándolo disponible para ser asignado a otro conductor. Consideraciones: El vehículo debe estar actualmente asignado a un conductor, se registrará la fecha de desasignación, se actualizará el historial de asignaciones."
     )
     @ApiResponses(value = {
         @ApiResponse(

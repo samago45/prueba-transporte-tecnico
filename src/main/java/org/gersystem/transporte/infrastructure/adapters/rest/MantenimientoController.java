@@ -3,7 +3,7 @@ package org.gersystem.transporte.infrastructure.adapters.rest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.gersystem.transporte.application.exception.BusinessException;
 import org.gersystem.transporte.domain.model.EstadoMantenimiento;
@@ -39,11 +39,7 @@ public class MantenimientoController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "Programar mantenimiento",
-        description = """
-            Programa un nuevo mantenimiento para un vehículo. Solo administradores pueden programar mantenimientos.
-            El tipo de mantenimiento puede ser PREVENTIVO o CORRECTIVO.
-            La fecha puede enviarse en formato 'YYYY-MM-DD' o 'YYYY-MM-DDTHH:mm:ss'.
-            """
+        description = "Programa un nuevo mantenimiento para un vehículo. Solo administradores pueden programar mantenimientos. El tipo de mantenimiento puede ser PREVENTIVO o CORRECTIVO. La fecha puede enviarse en formato 'YYYY-MM-DD' o 'YYYY-MM-DDTHH:mm:ss'."
     )
     @ApiResponses({
         @ApiResponse(
@@ -103,15 +99,7 @@ public class MantenimientoController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "Actualizar estado",
-        description = """
-            Actualiza el estado de un mantenimiento.
-            Los estados posibles son:
-            - PENDIENTE: El mantenimiento está pendiente de programación
-            - PROGRAMADO: El mantenimiento está programado pero no iniciado
-            - EN_PROCESO: El mantenimiento está siendo realizado
-            - COMPLETADO: El mantenimiento ha sido completado
-            - CANCELADO: El mantenimiento ha sido cancelado
-            """
+        description = "Actualiza el estado de un mantenimiento. Los estados posibles son: PENDIENTE, PROGRAMADO, EN_PROCESO, COMPLETADO, CANCELADO."
     )
     @ApiResponses({
         @ApiResponse(
@@ -195,21 +183,7 @@ public class MantenimientoController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(
         summary = "Listar mantenimientos",
-        description = """
-            Lista los mantenimientos con filtros opcionales y paginación.
-            
-            Parámetros de ordenamiento válidos (sort):
-            - id: Ordenar por identificador
-            - fechaProgramada: Ordenar por fecha programada
-            - fechaRealizada: Ordenar por fecha de realización
-            - tipo: Ordenar por tipo de mantenimiento
-            - estado: Ordenar por estado
-            
-            Ejemplos de uso:
-            - /api/v1/mantenimientos?page=0&size=10
-            - /api/v1/mantenimientos?vehiculoId=1&estado=PENDIENTE
-            - /api/v1/mantenimientos?sort=fechaProgramada,desc
-            """
+        description = "Lista los mantenimientos con filtros opcionales y paginación. Parámetros de ordenamiento válidos (sort): id, fechaProgramada, fechaRealizada, tipo, estado. Ejemplos de uso: /api/v1/mantenimientos?page=0&size=10, /api/v1/mantenimientos?vehiculoId=1&estado=PENDIENTE, /api/v1/mantenimientos?sort=fechaProgramada,desc"
     )
     @ApiResponses({
         @ApiResponse(
@@ -240,12 +214,7 @@ public class MantenimientoController {
             @RequestParam(required = false) EstadoMantenimiento estado,
             
             @Parameter(
-                description = """
-                    Paginación y ordenamiento.
-                    Formato: page=0&size=10&sort=propiedad,direccion
-                    Propiedades válidas: id, fechaProgramada, fechaRealizada, tipo, estado
-                    Direcciones válidas: asc, desc
-                    """
+                description = "Paginación y ordenamiento. Formato: page=0&size=10&sort=propiedad,direccion. Propiedades válidas: id, fechaProgramada, fechaRealizada, tipo, estado. Direcciones válidas: asc, desc"
             )
             Pageable pageable) {
         try {

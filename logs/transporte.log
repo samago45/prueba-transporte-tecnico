@@ -1,0 +1,1102 @@
+2025-07-15 20:53:24 [main] INFO  o.g.transporte.TransporteApplication - Starting TransporteApplication using Java 17.0.10 with PID 1284 (D:\Repos\Seleccion\transporte\target\classes started by desktop-dev in D:\Repos\Seleccion\transporte)
+2025-07-15 20:53:24 [main] DEBUG o.g.transporte.TransporteApplication - Running with Spring Boot v3.0.2, Spring v6.0.4
+2025-07-15 20:53:24 [main] INFO  o.g.transporte.TransporteApplication - No active profile set, falling back to 1 default profile: "default"
+2025-07-15 20:53:27 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-15 20:53:27 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 170 ms. Found 6 JPA repository interfaces.
+2025-07-15 20:53:29 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-15 20:53:29 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-07-15 20:53:29 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.5]
+2025-07-15 20:53:29 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-07-15 20:53:29 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 5236 ms
+2025-07-15 20:53:30 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.5.1 by Redgate
+2025-07-15 20:53:30 [main] INFO  o.f.c.i.license.VersionPrinter - See what's new here: https://flywaydb.org/documentation/learnmore/releaseNotes#9.5.1
+2025-07-15 20:53:30 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-07-15 20:53:30 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-07-15 20:53:31 [main] ERROR com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Exception during pool initialization.
+com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at com.mysql.cj.jdbc.exceptions.SQLError.createCommunicationsException(SQLError.java:175)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:64)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:825)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:446)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:239)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:188)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:359)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:201)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:470)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:100)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112)
+	at org.flywaydb.core.internal.jdbc.JdbcUtils.openConnection(JdbcUtils.java:48)
+	at org.flywaydb.core.internal.jdbc.JdbcConnectionFactory.<init>(JdbcConnectionFactory.java:75)
+	at org.flywaydb.core.FlywayExecutor.execute(FlywayExecutor.java:146)
+	at org.flywaydb.core.Flyway.migrate(Flyway.java:128)
+	at org.springframework.boot.autoconfigure.flyway.FlywayMigrationInitializer.afterPropertiesSet(FlywayMigrationInitializer.java:66)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1797)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1747)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:313)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:365)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:135)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveConstructorArguments(ConstructorResolver.java:691)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:515)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1324)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1161)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:561)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:365)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:135)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1663)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1412)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:598)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1405)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1325)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:885)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:789)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:245)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1344)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1188)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:561)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:415)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1324)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1161)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:561)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1405)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1325)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:885)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:789)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:245)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1344)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1188)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:561)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:205)
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.getOrderedBeansOfType(ServletContextInitializerBeans.java:208)
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:171)
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:166)
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAdaptableBeans(ServletContextInitializerBeans.java:151)
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.<init>(ServletContextInitializerBeans.java:86)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.getServletContextInitializerBeans(ServletWebServerApplicationContext.java:261)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.selfInitialize(ServletWebServerApplicationContext.java:235)
+	at org.springframework.boot.web.embedded.tomcat.TomcatStarter.onStartup(TomcatStarter.java:52)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5144)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1393)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1383)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+	at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:916)
+	at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:886)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1393)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1383)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+	at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:916)
+	at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:252)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+	at org.apache.catalina.core.StandardService.startInternal(StandardService.java:430)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+	at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:926)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+	at org.apache.catalina.startup.Tomcat.start(Tomcat.java:485)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:123)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.<init>(TomcatWebServer.java:104)
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getTomcatWebServer(TomcatServletWebServerFactory.java:486)
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getWebServer(TomcatServletWebServerFactory.java:210)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:183)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:161)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:578)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:730)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:432)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1302)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1291)
+	at org.gersystem.transporte.TransporteApplication.main(TransporteApplication.java:14)
+Caused by: com.mysql.cj.exceptions.CJCommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:150)
+	at com.mysql.cj.exceptions.ExceptionFactory.createCommunicationsException(ExceptionFactory.java:166)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:89)
+	at com.mysql.cj.NativeSession.connect(NativeSession.java:121)
+	at com.mysql.cj.jdbc.ConnectionImpl.connectOneTryOnly(ConnectionImpl.java:945)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:815)
+	... 129 common frames omitted
+Caused by: java.net.ConnectException: Connection refused: no further information
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:672)
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:547)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:602)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:633)
+	at com.mysql.cj.protocol.StandardSocketFactory.connect(StandardSocketFactory.java:153)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:63)
+	... 132 common frames omitted
+2025-07-15 20:53:31 [main] ERROR o.s.b.w.e.tomcat.TomcatStarter - Error starting Tomcat context. Exception: org.springframework.beans.factory.UnsatisfiedDependencyException. Message: Error creating bean with name 'jwtAuthenticationFilter' defined in file [D:\Repos\Seleccion\transporte\target\classes\org\gersystem\transporte\infrastructure\security\JwtAuthenticationFilter.class]: Unsatisfied dependency expressed through constructor parameter 1: Error creating bean with name 'applicationConfig' defined in file [D:\Repos\Seleccion\transporte\target\classes\org\gersystem\transporte\infrastructure\config\ApplicationConfig.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'usuarioRepository' defined in org.gersystem.transporte.domain.repository.UsuarioRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
+2025-07-15 20:53:31 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-07-15 20:53:31 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
+2025-07-15 20:53:31 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-07-15 20:53:32 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.context.ApplicationContextException: Unable to start web server
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:164)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:578)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:730)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:432)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1302)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1291)
+	at org.gersystem.transporte.TransporteApplication.main(TransporteApplication.java:14)
+Caused by: org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:142)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.<init>(TomcatWebServer.java:104)
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getTomcatWebServer(TomcatServletWebServerFactory.java:486)
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getWebServer(TomcatServletWebServerFactory.java:210)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:183)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:161)
+	... 8 common frames omitted
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'jwtAuthenticationFilter' defined in file [D:\Repos\Seleccion\transporte\target\classes\org\gersystem\transporte\infrastructure\security\JwtAuthenticationFilter.class]: Unsatisfied dependency expressed through constructor parameter 1: Error creating bean with name 'applicationConfig' defined in file [D:\Repos\Seleccion\transporte\target\classes\org\gersystem\transporte\infrastructure\config\ApplicationConfig.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'usuarioRepository' defined in org.gersystem.transporte.domain.repository.UsuarioRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:798)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:245)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1344)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1188)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:561)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:205)
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.getOrderedBeansOfType(ServletContextInitializerBeans.java:208)
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:171)
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:166)
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAdaptableBeans(ServletContextInitializerBeans.java:151)
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.<init>(ServletContextInitializerBeans.java:86)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.getServletContextInitializerBeans(ServletWebServerApplicationContext.java:261)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.selfInitialize(ServletWebServerApplicationContext.java:235)
+	at org.springframework.boot.web.embedded.tomcat.TomcatStarter.onStartup(TomcatStarter.java:52)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5144)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1393)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1383)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+	at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:916)
+	at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:886)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1393)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1383)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+	at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:916)
+	at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:252)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+	at org.apache.catalina.core.StandardService.startInternal(StandardService.java:430)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+	at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:926)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+	at org.apache.catalina.startup.Tomcat.start(Tomcat.java:485)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:123)
+	... 13 common frames omitted
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'applicationConfig' defined in file [D:\Repos\Seleccion\transporte\target\classes\org\gersystem\transporte\infrastructure\config\ApplicationConfig.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'usuarioRepository' defined in org.gersystem.transporte.domain.repository.UsuarioRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:798)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:245)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1344)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1188)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:561)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:415)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1324)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1161)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:561)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1405)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1325)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:885)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:789)
+	... 54 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'usuarioRepository' defined in org.gersystem.transporte.domain.repository.UsuarioRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:377)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:135)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1663)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1412)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:598)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1405)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1325)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:885)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:789)
+	... 77 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'jpaSharedEM_entityManagerFactory': Cannot resolve reference to bean 'entityManagerFactory' while setting constructor argument
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:377)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:135)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveConstructorArguments(ConstructorResolver.java:691)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:515)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1324)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1161)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:561)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:365)
+	... 91 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'flywayInitializer' defined in class path resource [org/springframework/boot/autoconfigure/flyway/FlywayAutoConfiguration$FlywayConfiguration.class]: Unable to obtain connection from database: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL State  : 08S01
+Error Code : 0
+Message    : Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1751)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:313)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:365)
+	... 103 common frames omitted
+Caused by: org.flywaydb.core.internal.exception.FlywaySqlException: Unable to obtain connection from database: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL State  : 08S01
+Error Code : 0
+Message    : Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+
+	at org.flywaydb.core.internal.jdbc.JdbcUtils.openConnection(JdbcUtils.java:60)
+	at org.flywaydb.core.internal.jdbc.JdbcConnectionFactory.<init>(JdbcConnectionFactory.java:75)
+	at org.flywaydb.core.FlywayExecutor.execute(FlywayExecutor.java:146)
+	at org.flywaydb.core.Flyway.migrate(Flyway.java:128)
+	at org.springframework.boot.autoconfigure.flyway.FlywayMigrationInitializer.afterPropertiesSet(FlywayMigrationInitializer.java:66)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1797)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1747)
+	... 112 common frames omitted
+Caused by: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at com.mysql.cj.jdbc.exceptions.SQLError.createCommunicationsException(SQLError.java:175)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:64)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:825)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:446)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:239)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:188)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:359)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:201)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:470)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:100)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112)
+	at org.flywaydb.core.internal.jdbc.JdbcUtils.openConnection(JdbcUtils.java:48)
+	... 118 common frames omitted
+Caused by: com.mysql.cj.exceptions.CJCommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:150)
+	at com.mysql.cj.exceptions.ExceptionFactory.createCommunicationsException(ExceptionFactory.java:166)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:89)
+	at com.mysql.cj.NativeSession.connect(NativeSession.java:121)
+	at com.mysql.cj.jdbc.ConnectionImpl.connectOneTryOnly(ConnectionImpl.java:945)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:815)
+	... 129 common frames omitted
+Caused by: java.net.ConnectException: Connection refused: no further information
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:672)
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:547)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:602)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:633)
+	at com.mysql.cj.protocol.StandardSocketFactory.connect(StandardSocketFactory.java:153)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:63)
+	... 132 common frames omitted
+2025-07-15 20:56:01 [main] INFO  o.g.transporte.TransporteApplication - Starting TransporteApplication using Java 17.0.11 with PID 23164 (D:\Repos\Seleccion\transporte\target\classes started by desktop-dev in D:\Repos\Seleccion\transporte)
+2025-07-15 20:56:01 [main] DEBUG o.g.transporte.TransporteApplication - Running with Spring Boot v3.0.2, Spring v6.0.4
+2025-07-15 20:56:01 [main] INFO  o.g.transporte.TransporteApplication - No active profile set, falling back to 1 default profile: "default"
+2025-07-15 20:56:03 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-15 20:56:03 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 69 ms. Found 6 JPA repository interfaces.
+2025-07-15 20:56:03 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-15 20:56:03 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-07-15 20:56:03 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.5]
+2025-07-15 20:56:03 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-07-15 20:56:03 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2020 ms
+2025-07-15 20:56:04 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.5.1 by Redgate
+2025-07-15 20:56:04 [main] INFO  o.f.c.i.license.VersionPrinter - See what's new here: https://flywaydb.org/documentation/learnmore/releaseNotes#9.5.1
+2025-07-15 20:56:04 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-07-15 20:56:04 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-07-15 20:56:04 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@13908f9c
+2025-07-15 20:56:04 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-07-15 20:56:04 [main] INFO  o.f.c.i.d.base.BaseDatabaseType - Database: jdbc:mysql://localhost:3306/appdb (MySQL 8.4)
+2025-07-15 20:56:04 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: MySQL 8.4 is newer than this version of Flyway and support has not been tested. The latest supported version of MySQL is 8.0.
+2025-07-15 20:56:04 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 1 migration (execution time 00:00.044s)
+2025-07-15 20:56:04 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema `appdb`: 1
+2025-07-15 20:56:04 [main] INFO  o.f.core.internal.command.DbMigrate - Schema `appdb` is up to date. No migration necessary.
+2025-07-15 20:56:04 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-15 20:56:04 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.1.6.Final
+2025-07-15 20:56:04 [main] WARN  org.hibernate.orm.deprecation - HHH90000021: Encountered deprecated setting [javax.persistence.sharedCache.mode], use [jakarta.persistence.sharedCache.mode] instead
+2025-07-15 20:56:05 [main] INFO  SQL dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQLDialect
+2025-07-15 20:56:05 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-07-15 20:56:05 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-15 20:56:06 [main] DEBUG o.g.t.i.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-07-15 20:56:06 [main] DEBUG o.s.w.f.ServerHttpObservationFilter - Filter 'serverHttpObservationFilter' configured for use
+2025-07-15 20:56:07 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-15 20:56:08 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 41 mappings in 'requestMappingHandlerMapping'
+2025-07-15 20:56:08 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2025-07-15 20:56:09 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 4 endpoint(s) beneath base path '/actuator'
+2025-07-15 20:56:09 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@327fa027, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@290db92f, org.springframework.security.web.context.SecurityContextHolderFilter@3a7f9efc, org.springframework.security.web.header.HeaderWriterFilter@45cfbfe9, org.springframework.security.web.authentication.logout.LogoutFilter@135de93b, org.gersystem.transporte.infrastructure.security.JwtAuthenticationFilter@14af9f51, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@427937c1, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4a1978df, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@670d2bbb, org.springframework.security.web.session.SessionManagementFilter@6cf50207, org.springframework.security.web.access.ExceptionTranslationFilter@51e68bcd, org.springframework.security.web.access.intercept.AuthorizationFilter@5c98fe31]
+2025-07-15 20:56:09 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-07-15 20:56:09 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-07-15 20:56:09 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2025-07-15 20:56:09 [main] INFO  o.g.transporte.TransporteApplication - Started TransporteApplication in 8.515 seconds (process running for 9.633)
+2025-07-15 20:56:10 [RMI TCP Connection(2)-192.168.100.4] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-15 20:56:10 [RMI TCP Connection(2)-192.168.100.4] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-15 20:56:10 [RMI TCP Connection(2)-192.168.100.4] DEBUG o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-15 20:56:10 [RMI TCP Connection(2)-192.168.100.4] DEBUG o.s.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-15 20:56:10 [RMI TCP Connection(2)-192.168.100.4] DEBUG o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-15 20:56:10 [RMI TCP Connection(2)-192.168.100.4] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@aab0379
+2025-07-15 20:56:10 [RMI TCP Connection(2)-192.168.100.4] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@74faa12
+2025-07-15 20:56:10 [RMI TCP Connection(2)-192.168.100.4] DEBUG o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-15 20:56:10 [RMI TCP Connection(2)-192.168.100.4] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 7 ms
+2025-07-15 20:56:36 [http-nio-8080-exec-1] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-1] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-1] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-1] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/index.html", parameters={}
+2025-07-15 20:56:36 [http-nio-8080-exec-1] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:56:36 [http-nio-8080-exec-3] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-2] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-2] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-3] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-4] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-2] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-3] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-3] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-2] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-4] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/index.css", parameters={}
+2025-07-15 20:56:36 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-ui.css", parameters={}
+2025-07-15 20:56:36 [http-nio-8080-exec-4] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-6] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-4] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-2] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-6] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-3] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-5] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-ui-bundle.js", parameters={}
+2025-07-15 20:56:36 [http-nio-8080-exec-4] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-5] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-6] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:56:36 [http-nio-8080-exec-5] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-6] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-5] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-initializer.js", parameters={}
+2025-07-15 20:56:36 [http-nio-8080-exec-6] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-ui-standalone-preset.js", parameters={}
+2025-07-15 20:56:36 [http-nio-8080-exec-5] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:36 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:56:36 [http-nio-8080-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:56:36 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:56:36 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api-docs/swagger-config", parameters={}
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
+2025-07-15 20:56:37 [http-nio-8080-exec-8] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:37 [http-nio-8080-exec-8] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:37 [http-nio-8080-exec-8] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:37 [http-nio-8080-exec-8] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:37 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/favicon-32x32.png", parameters={}
+2025-07-15 20:56:37 [http-nio-8080-exec-8] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2025-07-15 20:56:37 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Using 'application/json', given [*/*] and supported [application/json]
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Writing [{configUrl=/api-docs/swagger-config, oauth2RedirectUrl=http://localhost:8080/swagger-ui/oauth2-redir (truncated)...]
+2025-07-15 20:56:37 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:56:37 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
+2025-07-15 20:56:37 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
+2025-07-15 20:56:37 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
+2025-07-15 20:56:37 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
+2025-07-15 20:56:37 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
+2025-07-15 20:56:37 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
+2025-07-15 20:56:37 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
+2025-07-15 20:56:37 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
+2025-07-15 20:56:37 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api-docs", parameters={}
+2025-07-15 20:56:37 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
+2025-07-15 20:56:38 [http-nio-8080-exec-9] INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 567 ms
+2025-07-15 20:56:38 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Using 'application/json', given [application/json, */*] and supported [application/json]
+2025-07-15 20:56:38 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Writing ["{"openapi":"3.0.1","info":{"title":"API de Sistema de Transporte","description":"API para gestión de (truncated)..."]
+2025-07-15 20:56:38 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:57:06 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.AuthController#login(LoginRequestDTO)
+2025-07-15 20:57:06 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - POST "/api/v1/auth/login", parameters={}
+2025-07-15 20:57:06 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.AuthController#login(LoginRequestDTO)
+2025-07-15 20:57:06 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [LoginRequestDTO(usernameOrEmail=sncastro20@gmail.com, password=1407?Castro)]
+2025-07-15 20:57:07 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.apellido,
+        u1_0.created_by,
+        u1_0.created_date,
+        u1_0.email,
+        u1_0.last_modified_by,
+        u1_0.last_modified_date,
+        u1_0.nombre,
+        u1_0.password,
+        u1_0.refresh_token,
+        u1_0.refresh_token_expiry_date,
+        u1_0.username 
+    from
+        usuario u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=?
+2025-07-15 20:57:07 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.usuario_id,
+        r1_0.roles 
+    from
+        usuario_rol r1_0 
+    where
+        r1_0.usuario_id=?
+2025-07-15 20:57:07 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    update
+        usuario 
+    set
+        activo=?,
+        apellido=?,
+        created_by=?,
+        created_date=?,
+        email=?,
+        last_modified_by=?,
+        last_modified_date=?,
+        nombre=?,
+        password=?,
+        refresh_token=?,
+        refresh_token_expiry_date=?,
+        username=? 
+    where
+        id=?
+2025-07-15 20:57:07 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json] and supported [application/json, application/*+json]
+2025-07-15 20:57:07 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [JwtAuthenticationResponseDTO(accessToken=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzbmNhc3RybzIwIiwiYXV0aCI6Il (truncated)...]
+2025-07-15 20:57:07 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.apellido,
+        u1_0.created_by,
+        u1_0.created_date,
+        u1_0.email,
+        u1_0.last_modified_by,
+        u1_0.last_modified_date,
+        u1_0.nombre,
+        u1_0.password,
+        u1_0.refresh_token,
+        u1_0.refresh_token_expiry_date,
+        u1_0.username 
+    from
+        usuario u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=?
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.usuario_id,
+        r1_0.roles 
+    from
+        usuario_rol r1_0 
+    where
+        r1_0.usuario_id=?
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/v1/vehiculos?page=0&size=20&sort=fechaCreacion%2CASC", parameters={masked}
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Using @ExceptionHandler org.gersystem.transporte.infrastructure.adapters.rest.exception.GlobalExceptionHandler#handlePropertyReferenceException(PropertyReferenceException, WebRequest)
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json] and supported [application/json, application/*+json]
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [ErrorResponseDTO(timestamp=2025-07-15T20:57:23.889350300, status=400, error=Bad Request, code=INVALI (truncated)...]
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.data.mapping.PropertyReferenceException: No property 'fechaCreacion' found for type 'Vehiculo']
+2025-07-15 20:57:23 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Completed 400 BAD_REQUEST
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.apellido,
+        u1_0.created_by,
+        u1_0.created_date,
+        u1_0.email,
+        u1_0.last_modified_by,
+        u1_0.last_modified_date,
+        u1_0.nombre,
+        u1_0.password,
+        u1_0.refresh_token,
+        u1_0.refresh_token_expiry_date,
+        u1_0.username 
+    from
+        usuario u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=?
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.usuario_id,
+        r1_0.roles 
+    from
+        usuario_rol r1_0 
+    where
+        r1_0.usuario_id=?
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/v1/vehiculos?page=0&size=20", parameters={masked}
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Using @ExceptionHandler org.gersystem.transporte.infrastructure.adapters.rest.exception.GlobalExceptionHandler#handlePropertyReferenceException(PropertyReferenceException, WebRequest)
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json] and supported [application/json, application/*+json]
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [ErrorResponseDTO(timestamp=2025-07-15T20:57:30.181904, status=400, error=Bad Request, code=INVALID_P (truncated)...]
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.data.mapping.PropertyReferenceException: No property 'fechaCreacion' found for type 'Vehiculo']
+2025-07-15 20:57:30 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - Completed 400 BAD_REQUEST
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.apellido,
+        u1_0.created_by,
+        u1_0.created_date,
+        u1_0.email,
+        u1_0.last_modified_by,
+        u1_0.last_modified_date,
+        u1_0.nombre,
+        u1_0.password,
+        u1_0.refresh_token,
+        u1_0.refresh_token_expiry_date,
+        u1_0.username 
+    from
+        usuario u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=?
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.usuario_id,
+        r1_0.roles 
+    from
+        usuario_rol r1_0 
+    where
+        r1_0.usuario_id=?
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/v1/vehiculos?page=0&size=20&sort=", parameters={masked}
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Using @ExceptionHandler org.gersystem.transporte.infrastructure.adapters.rest.exception.GlobalExceptionHandler#handlePropertyReferenceException(PropertyReferenceException, WebRequest)
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json] and supported [application/json, application/*+json]
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [ErrorResponseDTO(timestamp=2025-07-15T20:57:38.932997700, status=400, error=Bad Request, code=INVALI (truncated)...]
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.data.mapping.PropertyReferenceException: No property 'fechaCreacion' found for type 'Vehiculo']
+2025-07-15 20:57:38 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - Completed 400 BAD_REQUEST
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.apellido,
+        u1_0.created_by,
+        u1_0.created_date,
+        u1_0.email,
+        u1_0.last_modified_by,
+        u1_0.last_modified_date,
+        u1_0.nombre,
+        u1_0.password,
+        u1_0.refresh_token,
+        u1_0.refresh_token_expiry_date,
+        u1_0.username 
+    from
+        usuario u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=?
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.usuario_id,
+        r1_0.roles 
+    from
+        usuario_rol r1_0 
+    where
+        r1_0.usuario_id=?
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/v1/vehiculos?page=0&size=20", parameters={masked}
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Using @ExceptionHandler org.gersystem.transporte.infrastructure.adapters.rest.exception.GlobalExceptionHandler#handlePropertyReferenceException(PropertyReferenceException, WebRequest)
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json] and supported [application/json, application/*+json]
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [ErrorResponseDTO(timestamp=2025-07-15T20:58:07.058262900, status=400, error=Bad Request, code=INVALI (truncated)...]
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.data.mapping.PropertyReferenceException: No property 'fechaCreacion' found for type 'Vehiculo']
+2025-07-15 20:58:07 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - Completed 400 BAD_REQUEST
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.apellido,
+        u1_0.created_by,
+        u1_0.created_date,
+        u1_0.email,
+        u1_0.last_modified_by,
+        u1_0.last_modified_date,
+        u1_0.nombre,
+        u1_0.password,
+        u1_0.refresh_token,
+        u1_0.refresh_token_expiry_date,
+        u1_0.username 
+    from
+        usuario u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=?
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.usuario_id,
+        r1_0.roles 
+    from
+        usuario_rol r1_0 
+    where
+        r1_0.usuario_id=?
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/v1/vehiculos?activo=true&page=0&size=20", parameters={masked}
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Using @ExceptionHandler org.gersystem.transporte.infrastructure.adapters.rest.exception.GlobalExceptionHandler#handlePropertyReferenceException(PropertyReferenceException, WebRequest)
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json] and supported [application/json, application/*+json]
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [ErrorResponseDTO(timestamp=2025-07-15T20:58:18.788734400, status=400, error=Bad Request, code=INVALI (truncated)...]
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.data.mapping.PropertyReferenceException: No property 'fechaCreacion' found for type 'Vehiculo']
+2025-07-15 20:58:18 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - Completed 400 BAD_REQUEST
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.apellido,
+        u1_0.created_by,
+        u1_0.created_date,
+        u1_0.email,
+        u1_0.last_modified_by,
+        u1_0.last_modified_date,
+        u1_0.nombre,
+        u1_0.password,
+        u1_0.refresh_token,
+        u1_0.refresh_token_expiry_date,
+        u1_0.username 
+    from
+        usuario u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=?
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.usuario_id,
+        r1_0.roles 
+    from
+        usuario_rol r1_0 
+    where
+        r1_0.usuario_id=?
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/v1/vehiculos?activo=true&page=1&size=20", parameters={masked}
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Using @ExceptionHandler org.gersystem.transporte.infrastructure.adapters.rest.exception.GlobalExceptionHandler#handlePropertyReferenceException(PropertyReferenceException, WebRequest)
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json] and supported [application/json, application/*+json]
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [ErrorResponseDTO(timestamp=2025-07-15T20:58:26.257549900, status=400, error=Bad Request, code=INVALI (truncated)...]
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.data.mapping.PropertyReferenceException: No property 'fechaCreacion' found for type 'Vehiculo']
+2025-07-15 20:58:26 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - Completed 400 BAD_REQUEST
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.apellido,
+        u1_0.created_by,
+        u1_0.created_date,
+        u1_0.email,
+        u1_0.last_modified_by,
+        u1_0.last_modified_date,
+        u1_0.nombre,
+        u1_0.password,
+        u1_0.refresh_token,
+        u1_0.refresh_token_expiry_date,
+        u1_0.username 
+    from
+        usuario u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=?
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.usuario_id,
+        r1_0.roles 
+    from
+        usuario_rol r1_0 
+    where
+        r1_0.usuario_id=?
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/v1/vehiculos?activo=true&page=1&size=20&sort=placa", parameters={masked}
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        v1_0.id,
+        v1_0.activo,
+        v1_0.capacidad,
+        v1_0.conductor_id,
+        v1_0.created_by,
+        v1_0.created_date,
+        v1_0.last_modified_by,
+        v1_0.last_modified_date,
+        v1_0.placa 
+    from
+        vehiculo v1_0 
+    where
+        1=1 
+        and v1_0.activo=? 
+    order by
+        v1_0.placa asc limit ?,
+        ?
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        count(v1_0.id) 
+    from
+        vehiculo v1_0 
+    where
+        1=1 
+        and v1_0.activo=?
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json] and supported [application/json, application/*+json]
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [org.gersystem.transporte.infrastructure.adapters.rest.dto.PageDTO@7592f465]
+2025-07-15 20:58:45 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.apellido,
+        u1_0.created_by,
+        u1_0.created_date,
+        u1_0.email,
+        u1_0.last_modified_by,
+        u1_0.last_modified_date,
+        u1_0.nombre,
+        u1_0.password,
+        u1_0.refresh_token,
+        u1_0.refresh_token_expiry_date,
+        u1_0.username 
+    from
+        usuario u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=?
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.usuario_id,
+        r1_0.roles 
+    from
+        usuario_rol r1_0 
+    where
+        r1_0.usuario_id=?
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerVehiculosLibres()
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerVehiculosLibres()
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerVehiculosLibres()
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerVehiculosLibres()
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerVehiculosLibres()
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerVehiculosLibres()
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerVehiculosLibres()
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerVehiculosLibres()
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerVehiculosLibres()
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/v1/vehiculos/libres", parameters={}
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerVehiculosLibres()
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        v1_0.id,
+        v1_0.activo,
+        v1_0.capacidad,
+        v1_0.conductor_id,
+        v1_0.created_by,
+        v1_0.created_date,
+        v1_0.last_modified_by,
+        v1_0.last_modified_date,
+        v1_0.placa 
+    from
+        vehiculo v1_0 
+    where
+        v1_0.activo=1 
+        and v1_0.conductor_id is null
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json] and supported [application/json, application/*+json]
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [[]]
+2025-07-15 20:58:57 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.apellido,
+        u1_0.created_by,
+        u1_0.created_date,
+        u1_0.email,
+        u1_0.last_modified_by,
+        u1_0.last_modified_date,
+        u1_0.nombre,
+        u1_0.password,
+        u1_0.refresh_token,
+        u1_0.refresh_token_expiry_date,
+        u1_0.username 
+    from
+        usuario u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=?
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.usuario_id,
+        r1_0.roles 
+    from
+        usuario_rol r1_0 
+    where
+        r1_0.usuario_id=?
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/v1/vehiculos?page=1&size=20&sort=placa", parameters={masked}
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        v1_0.id,
+        v1_0.activo,
+        v1_0.capacidad,
+        v1_0.conductor_id,
+        v1_0.created_by,
+        v1_0.created_date,
+        v1_0.last_modified_by,
+        v1_0.last_modified_date,
+        v1_0.placa 
+    from
+        vehiculo v1_0 
+    where
+        1=1 
+        and v1_0.activo=? 
+    order by
+        v1_0.placa asc limit ?,
+        ?
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        count(v1_0.id) 
+    from
+        vehiculo v1_0 
+    where
+        1=1 
+        and v1_0.activo=?
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json] and supported [application/json, application/*+json]
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [org.gersystem.transporte.infrastructure.adapters.rest.dto.PageDTO@10ce569]
+2025-07-15 20:59:08 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.apellido,
+        u1_0.created_by,
+        u1_0.created_date,
+        u1_0.email,
+        u1_0.last_modified_by,
+        u1_0.last_modified_date,
+        u1_0.nombre,
+        u1_0.password,
+        u1_0.refresh_token,
+        u1_0.refresh_token_expiry_date,
+        u1_0.username 
+    from
+        usuario u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=?
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.usuario_id,
+        r1_0.roles 
+    from
+        usuario_rol r1_0 
+    where
+        r1_0.usuario_id=?
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/v1/vehiculos?page=0&size=20&sort=placa", parameters={masked}
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.gersystem.transporte.infrastructure.adapters.rest.VehiculoController#obtenerTodosLosVehiculos(String, Boolean, Pageable)
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        v1_0.id,
+        v1_0.activo,
+        v1_0.capacidad,
+        v1_0.conductor_id,
+        v1_0.created_by,
+        v1_0.created_date,
+        v1_0.last_modified_by,
+        v1_0.last_modified_date,
+        v1_0.placa 
+    from
+        vehiculo v1_0 
+    where
+        1=1 
+        and v1_0.activo=? 
+    order by
+        v1_0.placa asc limit ?,
+        ?
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.activo,
+        c1_0.created_by,
+        c1_0.created_date,
+        c1_0.last_modified_by,
+        c1_0.last_modified_date,
+        c1_0.licencia,
+        c1_0.nombre 
+    from
+        conductor c1_0 
+    where
+        c1_0.id=?
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json] and supported [application/json, application/*+json]
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [org.gersystem.transporte.infrastructure.adapters.rest.dto.PageDTO@5f8496be]
+2025-07-15 20:59:22 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-15 21:03:53 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-15 21:03:53 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-07-15 21:03:53 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

@@ -1,7 +1,7 @@
 package org.gersystem.transporte.application;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ValidationException;
+import javax.persistence.EntityNotFoundException;
+import javax.validation.ValidationException;
 import org.gersystem.transporte.domain.model.Conductor;
 import org.gersystem.transporte.domain.repository.ConductorRepository;
 import org.gersystem.transporte.domain.service.ConductorDomainService;

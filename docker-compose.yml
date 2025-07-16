@@ -1,8 +1,7 @@
-version: '3.8'
-
 services:
   mysql:
     image: 'mysql:8.0'
+    container_name: transporte-mysql
     environment:
       MYSQL_DATABASE: ${DB_NAME:-appdb}
       MYSQL_PASSWORD: ${DB_PASSWORD:-secretAppPwd}
@@ -18,14 +17,17 @@ services:
       timeout: 5s
       retries: 10
       interval: 5s
+    restart: unless-stopped
 
   transporte-app:
     build: .
+    container_name: transporte-app
     ports:
       - '8080:8080'
     depends_on:
       mysql:
         condition: service_healthy
+    restart: unless-stopped
     environment:
       # Configuración de Base de Datos
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}

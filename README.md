@@ -81,14 +81,33 @@ El pipeline se ejecuta automáticamente en:
    mvn clean package
    ```
 
+### Configuración de Bases de Datos
+
+#### **Desarrollo (MySQL)**
+- **Base de datos:** MySQL 8.0
+- **Host:** localhost:3306
+- **Database:** appdb
+- **Usuario:** appuser
+- **Contraseña:** secretAppPwd
+- **Configuración:** `application.properties`
+
+#### **Pruebas (H2)**
+- **Base de datos:** H2 en memoria
+- **URL:** jdbc:h2:mem:testdb
+- **Usuario:** sa
+- **Contraseña:** (vacía)
+- **Configuración:** `application-test.properties`
+
 ### Ejecución Local
 
-1. **Modo Desarrollo (H2 Database)**
+1. **Modo Desarrollo (MySQL)**
    ```bash
    mvn spring-boot:run -Dspring.profiles.active=dev
+   # O simplemente:
+   mvn spring-boot:run
    ```
 
-2. **Modo Test (MySQL)**
+2. **Modo Test (H2 Database)**
    ```bash
    mvn spring-boot:run -Dspring.profiles.active=test
    ```
@@ -109,16 +128,16 @@ El pipeline se ejecuta automáticamente en:
 
 1. **Healthcheck**
    ```bash
-   curl http://localhost:8081/actuator/health
+   curl http://localhost:8080/actuator/health
    ```
 
 2. **Swagger UI**
-   - Acceder a: http://localhost:8081/swagger-ui.html
+   - Acceder a: http://localhost:8080/swagger-ui.html
    - Documentación completa de endpoints disponible
 
 3. **Métricas**
    ```bash
-   curl http://localhost:8081/actuator/metrics
+   curl http://localhost:8080/actuator/metrics
    ```
 
 ## Desarrollo y Pruebas
@@ -201,12 +220,7 @@ mvn springdoc:generate
   - Logs relevantes
   - Ambiente (dev/test/prod)
 
-### Contribuciones
-1. Fork del repositorio
-2. Crear rama feature
-3. Commit cambios
-4. Push a la rama
-5. Crear Pull Request
+
 
 ## Características Principales
 
@@ -236,7 +250,7 @@ mvn springdoc:generate
 ## Documentación API
 
 ### Swagger UI
-- Disponible en: `http://localhost:8081/swagger-ui.html`
+- Disponible en: `http://localhost:8080/swagger-ui.html`
 - Documentación completa de endpoints
 - Ejemplos de requests y responses
 

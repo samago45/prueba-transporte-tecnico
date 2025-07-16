@@ -1,7 +1,7 @@
 package org.gersystem.transporte.infrastructure.adapters.rest.exception;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ConstraintViolationException;
+import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.gersystem.transporte.application.exception.BusinessException;
 import org.gersystem.transporte.application.exception.ValidationException;
