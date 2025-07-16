@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import org.gersystem.transporte.application.ConductorApplicationService;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.*;
-import org.springdoc.core.annotations.ParameterObject;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +23,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 
 @RestController
 @RequestMapping("/api/v1/conductores")
-@Tag(name = "Conductores", description = """
-    API para la gestión de conductores. Permite:
-    - Crear, actualizar y eliminar conductores
-    - Consultar conductores por ID o con filtros
-    - Obtener conductores sin vehículos asignados
-    - Obtener estadísticas de vehículos por conductor
-    """)
+@Tag(name = "Conductores", description = "API para la gestión de conductores. Permite crear, actualizar y eliminar conductores, consultar conductores por ID o con filtros, obtener conductores sin vehículos asignados y obtener estadísticas de vehículos por conductor.")
 public class ConductorController {
 
     private final ConductorApplicationService conductorApplicationService;
@@ -42,15 +36,7 @@ public class ConductorController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "Crear un nuevo conductor",
-        description = """
-            Crea un nuevo conductor con la información proporcionada.
-            
-            Reglas de validación:
-            - La licencia debe seguir el formato de una letra mayúscula seguida de 5 dígitos (ejemplo: A12345)
-            - El nombre y apellidos son obligatorios
-            - El email debe ser único en el sistema
-            - La fecha de nacimiento debe ser válida (conductor mayor de edad)
-            """
+        description = "Crea un nuevo conductor con la información proporcionada. Reglas de validación: La licencia debe seguir el formato de una letra mayúscula seguida de 5 dígitos (ejemplo: A12345), el nombre y apellidos son obligatorios, el email debe ser único en el sistema, la fecha de nacimiento debe ser válida (conductor mayor de edad)."
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -105,11 +91,7 @@ public class ConductorController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "Actualizar un conductor existente",
-        description = """
-            Actualiza la información de un conductor existente.
-            Solo se pueden actualizar los campos proporcionados en el DTO.
-            La licencia y el email deben seguir siendo únicos en el sistema.
-            """
+        description = "Actualiza la información de un conductor existente. Solo se pueden actualizar los campos proporcionados en el DTO. La licencia y el email deben seguir siendo únicos en el sistema."
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -187,20 +169,7 @@ public class ConductorController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "Obtener todos los conductores con paginación y filtros",
-        description = """
-            Lista los conductores con filtros opcionales y paginación.
-            
-            Parámetros de ordenamiento válidos (sort):
-            - id: Ordenar por identificador
-            - nombre: Ordenar por nombre
-            - licencia: Ordenar por número de licencia
-            - fechaContratacion: Ordenar por fecha de contratación
-            
-            Ejemplos de uso:
-            - /api/v1/conductores?page=0&size=10
-            - /api/v1/conductores?nombre=Juan&activo=true
-            - /api/v1/conductores?sort=fechaContratacion,desc
-            """
+        description = "Lista los conductores con filtros opcionales y paginación. Parámetros de ordenamiento válidos (sort): id, nombre, licencia, fechaContratacion. Ejemplos de uso: /api/v1/conductores?page=0&size=10, /api/v1/conductores?nombre=Juan&activo=true, /api/v1/conductores?sort=fechaContratacion,desc"
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -218,14 +187,9 @@ public class ConductorController {
             @Parameter(description = "Filtrar por estado activo/inactivo")
             @RequestParam(required = false) Boolean activo,
             @Parameter(
-                description = """
-                    Paginación y ordenamiento.
-                    Formato: page=0&size=10&sort=propiedad,direccion
-                    Propiedades válidas: id, nombre, licencia, fechaContratacion
-                    Direcciones válidas: asc, desc
-                    """
+                description = "Paginación y ordenamiento. Formato: page=0&size=10&sort=propiedad,direccion. Propiedades válidas: id, nombre, licencia, fechaContratacion. Direcciones válidas: asc, desc"
             )
-            @ParameterObject Pageable pageable) {
+            Pageable pageable) {
         try {
             return ResponseEntity.ok(conductorApplicationService.obtenerTodosLosConductores(nombre, activo, pageable));
         } catch (PropertyReferenceException e) {
@@ -280,11 +244,7 @@ public class ConductorController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "Eliminar un conductor (borrado lógico)",
-        description = """
-            Realiza un borrado lógico del conductor.
-            El conductor quedará marcado como inactivo pero sus datos se mantienen en el sistema.
-            Solo se pueden eliminar conductores que no tengan vehículos asignados.
-            """
+        description = "Realiza un borrado lógico del conductor. El conductor quedará marcado como inactivo pero sus datos se mantienen en el sistema. Solo se pueden eliminar conductores que no tengan vehículos asignados."
     )
     @ApiResponses(value = {
         @ApiResponse(
