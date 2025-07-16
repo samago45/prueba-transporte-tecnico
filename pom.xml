@@ -34,8 +34,6 @@
         
         <!-- Configuración de SonarQube -->
         <sonar.host.url>http://localhost:9000</sonar.host.url>
-        <sonar.login>admin</sonar.login>
-        <sonar.password>admin</sonar.password>
         <sonar.projectKey>transporte</sonar.projectKey>
         <sonar.projectName>Sistema de Transporte</sonar.projectName>
         <sonar.projectVersion>1.0.0</sonar.projectVersion>

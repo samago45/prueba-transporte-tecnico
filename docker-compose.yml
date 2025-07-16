@@ -166,38 +166,6 @@ services:
     depends_on:
       - prometheus
 
-  # Análisis automático después de que la app esté lista
-  auto-sonar-analysis:
-    build: .
-    container_name: auto-sonar-analysis
-    volumes:
-      - .:/app
-    working_dir: /app
-    environment:
-      - SONAR_HOST_URL=http://sonarqube:9000
-      - SONAR_LOGIN=admin
-      - SONAR_PASSWORD=admin
-    command: >
-      sh -c "
-        echo 'Esperando que SonarQube esté listo...' &&
-        while ! curl -f http://sonarqube:9000/api/system/status; do
-          sleep 10
-        done &&
-        echo 'SonarQube listo, iniciando análisis automático...' &&
-        mvn clean verify sonar:sonar
-          -Dsonar.host.url=http://sonarqube:9000
-          -Dsonar.login=admin
-          -Dsonar.password=admin
-          -Dsonar.projectKey=transporte
-          -Dsonar.projectName='Sistema de Transporte'
-      "
-    depends_on:
-      sonarqube:
-        condition: service_healthy
-      transporte-app:
-        condition: service_healthy
-    restart: "no"  # Solo se ejecuta una vez
-
 volumes:
   mysql-data:
   sonarqube_data:

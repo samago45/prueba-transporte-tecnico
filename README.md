@@ -23,7 +23,25 @@ El proyecto sigue los principios de **Clean Architecture** y **Domain-Driven Des
 │  │   Services      │  │   Handling      │  │   Service    │ │
 │  └─────────────────┘  └─────────────────┘  └──────────────┘ │
 └─────────────────────────────────────────────────────────────┘
-             
+                                │
+┌─────────────────────────────────────────────────────────────┐
+│                     DOMAIN LAYER                            │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+│  │   Entities      │  │   Domain        │  │ Repository   │ │
+│  │   (Models)      │  │   Services      │  │  Interfaces  │ │
+│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+                                │
+┌─────────────────────────────────────────────────────────────┐
+│                  INFRASTRUCTURE LAYER                       │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+│  │   Repository    │  │   Security      │  │   Monitoring │ │
+│  │  Implementations│  │   Config        │  │   (Prometheus)│ │
+│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+
+### Estructura de Paquetes
+
 ## Características Principales
 
 ### Seguridad
@@ -478,10 +496,6 @@ mvn test
 # Pruebas de integración
 mvn verify -P integration-test
 
-# Pruebas de rendimiento
-cd performance-tests
-./run-load-test.sh
-```
 
 ### Análisis de Código
 ```bash
