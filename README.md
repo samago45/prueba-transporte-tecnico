@@ -603,25 +603,7 @@ El pipeline se ejecuta automáticamente en:
 5. **Análisis de Calidad:** SonarQube
 6. **Seguridad:** Escaneo con Trivy
 
-## Soporte y Contacto
 
-### Reportar Problemas
-- Crear issue en el repositorio
-- Incluir:
-  - Descripción detallada
-  - Pasos para reproducir
-  - Logs relevantes
-  - Ambiente (dev/test/prod)
-
-### Contribuir
-1. Fork el repositorio
-2. Crear rama feature: `git checkout -b feature/nueva-funcionalidad`
-3. Commit cambios: `git commit -am 'Agregar nueva funcionalidad'`
-4. Push a la rama: `git push origin feature/nueva-funcionalidad`
-5. Crear Pull Request
-
-## Licencia
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
 
 
