@@ -35,12 +35,6 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long>, JpaSpecif
     @Query("SELECT COALESCE(SUM(p.peso), 0) FROM Pedido p WHERE p.estado = 'ENTREGADO'")
     BigDecimal calcularPesoTotalTransportado();
     
-    @Query("""
-        SELECT AVG((p.peso / v.capacidad) * 100)
-        FROM Pedido p
-        JOIN p.vehiculo v
-        WHERE p.createdDate BETWEEN :fechaInicio AND :fechaFin
-        AND p.estado = 'ENTREGADO'
-    """)
+    @Query("SELECT AVG((p.peso / v.capacidad) * 100) FROM Pedido p JOIN p.vehiculo v WHERE p.createdDate BETWEEN :fechaInicio AND :fechaFin AND p.estado = 'ENTREGADO'")
     Double calcularPromedioCapacidadUtilizada(LocalDateTime fechaInicio, LocalDateTime fechaFin);
 } 

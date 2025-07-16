@@ -1,6 +1,6 @@
 package org.gersystem.transporte.domain.service;
 
-import jakarta.persistence.EntityNotFoundException;
+import javax.persistence.EntityNotFoundException;
 import org.gersystem.transporte.domain.model.Ruta;
 import org.gersystem.transporte.domain.repository.RutaRepository;
 import org.springframework.data.domain.Page;

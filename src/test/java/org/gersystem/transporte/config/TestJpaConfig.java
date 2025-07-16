@@ -14,10 +14,14 @@ import java.util.Optional;
 @TestPropertySource(properties = {
     "spring.main.allow-bean-definition-overriding=true",
     "spring.jpa.hibernate.ddl-auto=create-drop",
-    "spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-    "spring.datasource.username=sa",
-    "spring.datasource.password=",
-    "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect"
+    "spring.jpa.show-sql=false",
+    "spring.jpa.properties.hibernate.format_sql=false",
+    "spring.jpa.properties.hibernate.cache.use_second_level_cache=false",
+    "spring.jpa.properties.hibernate.cache.use_query_cache=false",
+    "spring.flyway.enabled=true",
+    "spring.flyway.locations=classpath:db/migration",
+    "spring.sql.init.mode=always",
+    "spring.sql.init.continue-on-error=true"
 })
 public class TestJpaConfig {
 

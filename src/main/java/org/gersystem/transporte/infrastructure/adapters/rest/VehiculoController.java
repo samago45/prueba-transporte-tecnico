@@ -8,12 +8,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.gersystem.transporte.application.VehiculoApplicationService;
 import org.gersystem.transporte.application.exception.ValidationException;
 import org.gersystem.transporte.infrastructure.adapters.rest.dto.*;
-import org.springdoc.core.annotations.ParameterObject;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -45,19 +45,7 @@ public class VehiculoController {
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = VehiculoDTO.class),
-                examples = @ExampleObject(value = """
-                    {
-                        "id": 1,
-                        "placa": "ABC123",
-                        "capacidadCarga": 5000.0,
-                        "volumenCarga": 20.5,
-                        "activo": true,
-                        "conductorId": null,
-                        "fechaCreacion": "2024-03-20T10:30:00",
-                        "ultimoMantenimiento": null,
-                        "kilometraje": 0
-                    }
-                    """)
+                examples = @ExampleObject(value = "{\"id\": 1,\"placa\": \"ABC123\",\"capacidadCarga\": 5000.0,\"volumenCarga\": 20.5,\"activo\": true,\"conductorId\": null,\"fechaCreacion\": \"2024-03-20T10:30:00\",\"ultimoMantenimiento\": null,\"kilometraje\": 0}")
             )
         ),
         @ApiResponse(
@@ -215,7 +203,7 @@ public class VehiculoController {
             @Parameter(description = "Filtrar por estado del vehículo (true=activo, false=inactivo)")
             @RequestParam(required = false) Boolean activo,
             @Parameter(description = "Parámetros de paginación y ordenamiento (size, page, sort)")
-            @ParameterObject @PageableDefault(size = 20, sort = "fechaCreacion") Pageable pageable) {
+            @PageableDefault(size = 20, sort = "fechaCreacion") Pageable pageable) {
         PageDTO<VehiculoDTO> vehiculos = vehiculoApplicationService.obtenerTodosLosVehiculos(placa, activo, pageable);
         return ResponseEntity.ok(vehiculos);
     }

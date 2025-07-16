@@ -1,0 +1,27 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Spring Boot Application
+  - job_name: 'transporte-app'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['transporte-app:8080']
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  # MySQL ( para métricas de base de datos)
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['mysql:3306']
+    scrape_interval: 30s 

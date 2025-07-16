@@ -1,8 +1,8 @@
 package org.gersystem.transporte.infrastructure.adapters.rest.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
